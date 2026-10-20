@@ -1,0 +1,4 @@
+research/vendor/
+.DS_Store
+__pycache__/
+research/drafts/
