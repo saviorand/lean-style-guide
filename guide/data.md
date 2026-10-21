@@ -92,6 +92,32 @@ def deleteArticle (user : UserId) (article : ArticleId) : String :=
 
 *Sources: FPIL on [separate structures][fpil-separate] and [run-time cost][fpil-wrapper], [Haskell (Kowainik)][kowainik-data], [Rust API guidelines][rust-newtype].*
 
+<a name="data-boundary"></a>
+## Checking at the boundary
+
+Check a value once, where it enters your program, and from then on pass a type that records the check. Keep subtypes and proof fields behind an API that maintains them, so callers never write proofs.
+
+```lean
+-- bad: every caller has to prove the bound
+def listen (port : Nat) (h : port < 65536) : String := s!"listening on {port}"
+
+def start := listen 8080 (by decide)
+```
+
+```lean
+-- good: `Port.ofNat?` checks once, and the result carries the proof
+structure Port where
+  val : Nat
+  valid : val < 65536
+
+def Port.ofNat? (n : Nat) : Option Port :=
+  if h : n < 65536 then some ⟨n, h⟩ else none
+
+def listen (port : Port) : String := s!"listening on {port.val}"
+```
+
+*Sources: [Alexis King][king], [FPIL][fpil-subtype], [Std's `HashMap`][std-hashmap].*
+
 <a name="data-abbrev"></a>
 ## `abbrev`, `def` and `structure` for types
 
@@ -115,6 +141,72 @@ def defaultPort : Port := ⟨8080⟩
 ```
 
 *Sources: FPIL on [`abbrev`][fpil-abbrev] and [monad stacks][fpil-abbrev-stack], [Haskell (Kowainik)][kowainik-data], [checked with Lean 4.35][checked].*
+
+<a name="data-extends"></a>
+## Inheritance
+
+Use `extends` only when one structure clearly "is a" kind of another.
+
+*Source: [FPIL][fpil-extends].*
+
+<a name="data-indexed-families"></a>
+## Indexed families
+
+Avoid indexed families in APIs, such as a vector type indexed by its length. They expose the implementation in the interface, slow down type checking and produce hard-to-read errors. Use them only for code that resembles a typed language, such as an interpreter or a typed syntax tree.
+
+*Source: [FPIL][fpil-indexed].*
+
+<a name="data-deriving"></a>
+## Deriving instances
+
+Derive instances instead of writing them by hand, so they stay correct when the type changes. Derive `Repr` for every data type, so you can inspect its values with `#eval`. Derive `Hashable` together with `BEq` for types used as hash map keys. Write an instance by hand only when the derived one does the wrong thing.
+
+```lean
+-- bad
+structure Version where
+  major : Nat
+  minor : Nat
+
+instance : BEq Version where
+  beq a b := a.major == b.major && a.minor == b.minor
+```
+
+```lean
+-- good
+structure Version where
+  major : Nat
+  minor : Nat
+deriving Repr, BEq, Hashable, Ord
+```
+
+*Source: [FPIL][fpil-deriving].*
+
+<a name="data-constructors"></a>
+## Building structures
+
+Build structures with named fields, as in `{ name := "Ada", age := 36 }`. Use `⟨…⟩` or `Point.mk` only for small structures where the order of the fields is obvious.
+
+```lean
+structure User where
+  name : String
+  email : String
+  age : Nat
+
+-- bad: name and email are swapped, and it compiles
+def ada : User := ⟨"ada@example.com", "Ada", 36⟩
+```
+
+```lean
+structure User where
+  name : String
+  email : String
+  age : Nat
+
+-- good
+def ada : User := { name := "Ada", email := "ada@example.com", age := 36 }
+```
+
+*Source: [FPIL][fpil-mk].*
 
 <a name="data-update"></a>
 ## Updating structures
@@ -144,101 +236,9 @@ def rename (s : Settings) (title : String) : Settings := { s with title }
 
 *Source: [FPIL][fpil-update].*
 
-<a name="data-constructors"></a>
-## Building structures
-
-Build structures with named fields, as in `{ name := "Ada", age := 36 }`. Use `⟨…⟩` or `Point.mk` only for small structures where the order of the fields is obvious.
-
-```lean
-structure User where
-  name : String
-  email : String
-  age : Nat
-
--- bad: name and email are swapped, and it compiles
-def ada : User := ⟨"ada@example.com", "Ada", 36⟩
-```
-
-```lean
-structure User where
-  name : String
-  email : String
-  age : Nat
-
--- good
-def ada : User := { name := "Ada", email := "ada@example.com", age := 36 }
-```
-
-*Source: [FPIL][fpil-mk].*
-
-<a name="data-deriving"></a>
-## Deriving instances
-
-Derive instances instead of writing them by hand, so they stay correct when the type changes. Derive `Repr` for every data type, so you can inspect its values with `#eval`. Derive `Hashable` together with `BEq` for types used as hash map keys. Write an instance by hand only when the derived one does the wrong thing.
-
-```lean
--- bad
-structure Version where
-  major : Nat
-  minor : Nat
-
-instance : BEq Version where
-  beq a b := a.major == b.major && a.minor == b.minor
-```
-
-```lean
--- good
-structure Version where
-  major : Nat
-  minor : Nat
-deriving Repr, BEq, Hashable, Ord
-```
-
-*Source: [FPIL][fpil-deriving].*
-
-<a name="data-boundary"></a>
-## Checking at the boundary
-
-Check a value once, where it enters your program, and from then on pass a type that records the check. Keep subtypes and proof fields behind an API that maintains them, so callers never write proofs.
-
-```lean
--- bad: every caller has to prove the bound
-def listen (port : Nat) (h : port < 65536) : String := s!"listening on {port}"
-
-def start := listen 8080 (by decide)
-```
-
-```lean
--- good: `Port.ofNat?` checks once, and the result carries the proof
-structure Port where
-  val : Nat
-  valid : val < 65536
-
-def Port.ofNat? (n : Nat) : Option Port :=
-  if h : n < 65536 then some ⟨n, h⟩ else none
-
-def listen (port : Port) : String := s!"listening on {port.val}"
-```
-
-*Sources: [Alexis King][king], [FPIL][fpil-subtype], [Std's `HashMap`][std-hashmap].*
-
-<a name="data-indexed-families"></a>
-## Indexed families
-
-Avoid indexed families in APIs, such as a vector type indexed by its length. They expose the implementation in the interface, slow down type checking and produce hard-to-read errors. Use them only for code that resembles a typed language, such as an interpreter or a typed syntax tree.
-
-*Source: [FPIL][fpil-indexed].*
-
-<a name="data-extends"></a>
-## Inheritance
-
-Use `extends` only when one structure clearly "is a" kind of another.
-
-*Source: [FPIL][fpil-extends].*
-
 ---
 
-Previous: [`do` notation and effects](effects.md) · [Contents](../README.md#rules) · Next: [Type classes and instances](classes.md)
+[Contents](../README.md#rules) · Next: [Effects and `do` notation](effects.md)
 
 [checked]: ../research/decisions.md#facts-checked-while-drafting
 [fpil-abbrev]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/GettingToKnow/FunctionsDefinitions.lean#L224

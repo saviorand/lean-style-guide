@@ -21,6 +21,13 @@ structure ClientConfig where
 
 *Sources: [Lean core style][cs-docs], [Batteries configuration][batteries-docs], [Google Haskell guide][google-haddock].*
 
+<a name="docs-module"></a>
+## Module docstrings
+
+Begin every file with a module docstring that has a `#` title and says what the file is for, as in the [file structure](layout.md#layout-file) example.
+
+*Source: [Mathlib documentation][ml-doc].*
+
 <a name="docs-summary"></a>
 ## The first sentence
 
@@ -39,6 +46,13 @@ def displayName (first last : String) : String := s!"{first} {last}"
 ```
 
 *Sources: [Lean documentation style][ds-constants], [Lean core style][cs-docs].*
+
+<a name="docs-examples"></a>
+## Examples
+
+Show how to use the main functions of a library with a short example in the docstring. Check each example in a test with [`#guard_msgs`](testing.md#tests-guard-msgs), so it stays correct.
+
+*Sources: [Rust API guidelines][rust-example], [FPIL][fpil-examples].*
 
 <a name="docs-layout"></a>
 ## Docstring layout
@@ -60,23 +74,9 @@ def nonEmptyLines (text : String) : List String := (text.splitOn "\n").filter (�
 
 *Source: [Lean core style][cs-docs].*
 
-<a name="docs-examples"></a>
-## Examples
-
-Show how to use the main functions of a library with a short example in the docstring. Check each example in a test with [`#guard_msgs`](testing.md#tests-guard-msgs), so it stays correct.
-
-*Sources: [Rust API guidelines][rust-example], [FPIL][fpil-examples].*
-
-<a name="docs-module"></a>
-## Module docstrings
-
-Begin every file with a module docstring that has a `#` title and says what the file is for, as in the [file structure](layout.md#layout-file) example.
-
-*Source: [Mathlib documentation][ml-doc].*
-
 ---
 
-Previous: [Comments](comments.md) · [Contents](../README.md#rules) · Next: [Testing](testing.md)
+Previous: [Testing](testing.md) · [Contents](../README.md#rules) · Next: [Comments](comments.md)
 
 [batteries-docs]: https://github.com/leanprover-community/batteries/blob/4453b52d2468f4c346a8711d728c0742e7483c9b/lakefile.toml#L7
 [cs-docs]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/doc/std/style.md#documentation-comments

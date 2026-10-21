@@ -9,30 +9,6 @@ Define a type class when several types will have instances and code will be gene
 
 *Source: [FPIL][fpil-classes].*
 
-<a name="classes-where"></a>
-## Instance syntax
-
-Write instances with `where`, one method per line.
-
-```lean
-structure Money where
-  cents : Int
-
--- bad
-instance : Add Money := ⟨fun a b => ⟨a.cents + b.cents⟩⟩
-```
-
-```lean
-structure Money where
-  cents : Int
-
--- good
-instance : Add Money where
-  add a b := ⟨a.cents + b.cents⟩
-```
-
-*Source: [FPIL][fpil-instwhere].*
-
 <a name="classes-weakest"></a>
 ## The weakest class that works
 
@@ -107,9 +83,33 @@ instance : ToString Tree where
 
 *Source: [Lean Reference][ref-recinst].*
 
+<a name="classes-where"></a>
+## Instance syntax
+
+Write instances with `where`, one method per line.
+
+```lean
+structure Money where
+  cents : Int
+
+-- bad
+instance : Add Money := ⟨fun a b => ⟨a.cents + b.cents⟩⟩
+```
+
+```lean
+structure Money where
+  cents : Int
+
+-- good
+instance : Add Money where
+  add a b := ⟨a.cents + b.cents⟩
+```
+
+*Source: [FPIL][fpil-instwhere].*
+
 ---
 
-Previous: [Data modelling](data.md) · [Contents](../README.md#rules) · Next: [Collections](collections.md)
+Previous: [Functions](functions.md) · [Contents](../README.md#rules) · Next: [Collections](collections.md)
 
 
 [fpil-classes]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/TypeClasses/Coercions.lean#L328

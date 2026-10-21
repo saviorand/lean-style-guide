@@ -44,7 +44,7 @@ Declare C functions with `@[extern]` in a small module of their own, and wrap th
 
 ---
 
-Previous: [Proofs about programs](proofs.md) · [Contents](../README.md#rules) · Next: [API design and visibility](api.md)
+Previous: [Macros and notation](macros.md) · [Contents](../README.md#rules) · Next: [Projects and tooling](projects.md)
 
 [fro-d]: ../research/author-survey.md#author-dependent-no-fro-convention
 [google-pragmas]: https://google.github.io/styleguide/haskellguide.html#pragmas

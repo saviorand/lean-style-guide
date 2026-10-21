@@ -67,63 +67,12 @@ def totalPrice (items : List Item) : Nat := items.foldl (· + ·.price) 0
 
 *Sources: [Mathlib configuration][ml-autoimplicit], [checked with Lean 4.35][checked].*
 
-<a name="functions-lambdas"></a>
-## Lambdas
+<a name="functions-size"></a>
+## Function size
 
-Write lambdas as `fun x => e`. Don't use `λ` or `↦`. For very simple lambdas, use the `·` shorthand, so `(· + 1)` means `fun x => x + 1`.
+Keep each function short enough to read at once. If a function does two jobs, such as parsing input and computing a result, split it in two.
 
-```lean
--- bad
-def incrementAll (xs : List Nat) : List Nat := xs.map (λ x ↦ x + 1)
-```
-
-```lean
--- good
-def incrementAll (xs : List Nat) : List Nat := xs.map (· + 1)
-
-def names (people : List (String × Nat)) : List String := people.map fun (name, _) => name
-```
-
-*Sources: [Lean core style][cs-notation], [FPIL][fpil-fun], [FRO practice][fro-c].*
-
-<a name="functions-pipelines"></a>
-## Pipelines
-
-Use `|>` when a value goes through several steps in order, and `|>.` to continue with a method call. Use `<|` to avoid parentheses around a last argument. Don't use `$`.
-
-```lean
--- bad
-def report (words : List String) : String :=
-  String.intercalate ", " (List.map String.toUpper (List.filter (fun w => w.length > 3) words))
-```
-
-```lean
--- good
-def report (words : List String) : String :=
-  words.filter (·.length > 3) |>.map String.toUpper |> ", ".intercalate
-```
-
-*Sources: [FPIL][fpil-pipe], [Mathlib style][ml-delims].*
-
-<a name="functions-point-free"></a>
-## Point-free style
-
-Avoid chains of more than two functions joined with `∘`. Name the argument instead, so the reader can follow the data.
-
-```lean
--- bad
-def slug : String → String :=
-  String.intercalate "-" ∘ List.filter (· != "") ∘ (String.splitOn · " ") ∘ String.toLower
-```
-
-```lean
--- good
-def slug (title : String) : String :=
-  let words := (title.toLower.splitOn " ").filter (· != "")
-  "-".intercalate words
-```
-
-*Sources: [Google Haskell guide][google-pointfree], [Haskell (Kowainik)][kowainik], [Haskell (Tibell)][tibell], [F# conventions][fs-pointfree].*
+*Source: [FPIL][fpil-concerns].*
 
 <a name="functions-helpers"></a>
 ## Local helpers
@@ -149,13 +98,6 @@ where
 ```
 
 *Source: [FRO practice][fro-c].*
-
-<a name="functions-size"></a>
-## Function size
-
-Keep each function short enough to read at once. If a function does two jobs, such as parsing input and computing a result, split it in two.
-
-*Source: [FPIL][fpil-concerns].*
 
 <a name="functions-options"></a>
 ## Many parameters
@@ -247,9 +189,67 @@ def Shape.isRound : Shape → Bool
 
 *Source: [OCaml guidelines][ocaml-match].*
 
+<a name="functions-pipelines"></a>
+## Pipelines
+
+Use `|>` when a value goes through several steps in order, and `|>.` to continue with a method call. Use `<|` to avoid parentheses around a last argument. Don't use `$`.
+
+```lean
+-- bad
+def report (words : List String) : String :=
+  String.intercalate ", " (List.map String.toUpper (List.filter (fun w => w.length > 3) words))
+```
+
+```lean
+-- good
+def report (words : List String) : String :=
+  words.filter (·.length > 3) |>.map String.toUpper |> ", ".intercalate
+```
+
+*Sources: [FPIL][fpil-pipe], [Mathlib style][ml-delims].*
+
+<a name="functions-point-free"></a>
+## Point-free style
+
+Avoid chains of more than two functions joined with `∘`. Name the argument instead, so the reader can follow the data.
+
+```lean
+-- bad
+def slug : String → String :=
+  String.intercalate "-" ∘ List.filter (· != "") ∘ (String.splitOn · " ") ∘ String.toLower
+```
+
+```lean
+-- good
+def slug (title : String) : String :=
+  let words := (title.toLower.splitOn " ").filter (· != "")
+  "-".intercalate words
+```
+
+*Sources: [Google Haskell guide][google-pointfree], [Haskell (Kowainik)][kowainik], [Haskell (Tibell)][tibell], [F# conventions][fs-pointfree].*
+
+<a name="functions-lambdas"></a>
+## Lambdas
+
+Write lambdas as `fun x => e`. Don't use `λ` or `↦`. For very simple lambdas, use the `·` shorthand, so `(· + 1)` means `fun x => x + 1`.
+
+```lean
+-- bad
+def incrementAll (xs : List Nat) : List Nat := xs.map (λ x ↦ x + 1)
+```
+
+```lean
+-- good
+def incrementAll (xs : List Nat) : List Nat := xs.map (· + 1)
+
+def names (people : List (String × Nat)) : List String := people.map fun (name, _) => name
+```
+
+*Sources: [Lean core style][cs-notation], [FPIL][fpil-fun], [FRO practice][fro-c].*
+
 ---
 
-Previous: [Naming](naming.md) · [Contents](../README.md#rules) · Next: [`do` notation and effects](effects.md)
+Previous: [Naming](naming.md) · [Contents](../README.md#rules) · Next: [Type classes and instances](classes.md)
 
 [checked]: ../research/decisions.md#facts-checked-while-drafting
 [clj-params]: https://guide.clojure.style/#function-positional-parameter-limit

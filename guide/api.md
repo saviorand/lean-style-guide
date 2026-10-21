@@ -2,6 +2,13 @@
 
 Part of [A Lean Style Guide for Software](../README.md), a community draft. Every example compiles with Lean 4.35.0.
 
+<a name="api-surface"></a>
+## Small public surface
+
+Make public only what callers need. You have to keep every public declaration working or deprecate it.
+
+*Source: [Rust API guidelines][rust-private].*
+
 <a name="api-modules"></a>
 ## Modules
 
@@ -72,6 +79,21 @@ def describe (v : Vec2) (count : Nat) : String := s!"{v.toString} × {toString c
 
 *Source: [FPIL][fpil-protected].*
 
+<a name="api-deprecation"></a>
+## Deprecation
+
+Before you rename or remove a public declaration, mark it `@[deprecated newName (since := "YYYY-MM-DD")]` and keep it for a while. Lean then warns everyone who still uses the old name and tells them the new one.
+
+```lean
+-- good
+def fetchUrl (url : String) : String := url
+
+@[deprecated fetchUrl (since := "2026-10-20")]
+def getUrl (url : String) : String := fetchUrl url
+```
+
+*Source: [Mathlib style][ml-deprecation].*
+
 <a name="api-open"></a>
 ## `open`
 
@@ -110,31 +132,9 @@ def joinAll {α : Type} [ToString α] (sep : String) (xs : List α) : String :=
 
 *Sources: [agda-stdlib style guide][agda-variable], [FRO practice][fro-all].*
 
-<a name="api-deprecation"></a>
-## Deprecation
-
-Before you rename or remove a public declaration, mark it `@[deprecated newName (since := "YYYY-MM-DD")]` and keep it for a while. Lean then warns everyone who still uses the old name and tells them the new one.
-
-```lean
--- good
-def fetchUrl (url : String) : String := url
-
-@[deprecated fetchUrl (since := "2026-10-20")]
-def getUrl (url : String) : String := fetchUrl url
-```
-
-*Source: [Mathlib style][ml-deprecation].*
-
-<a name="api-surface"></a>
-## Small public surface
-
-Make public only what callers need. You have to keep every public declaration working or deprecate it.
-
-*Source: [Rust API guidelines][rust-private].*
-
 ---
 
-Previous: [Performance and low-level code](performance.md) · [Contents](../README.md#rules) · Next: [Macros and notation](macros.md)
+Previous: [Error handling](errors.md) · [Contents](../README.md#rules) · Next: [Naming](naming.md)
 
 
 [agda-variable]: https://github.com/agda/agda-stdlib/blob/2ffa8b7d4e8e818717ad643d184f055a4d1b0447/doc/style-guide.md

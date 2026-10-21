@@ -37,13 +37,6 @@ theorem double_add (a b : Nat) : double (a + b) = double a + double b := by
 
 *Source: [Lean naming conventions][cn-prelude].*
 
-<a name="naming-acronyms"></a>
-## Acronyms
-
-Write acronyms of four or more letters as words: `Json`, `Http`, `parseJson`, `HttpServer`. Keep acronyms of up to three letters in one case: `IO`, `URL`, `toURL`, `urlPath`. Keep established mixed-case spellings such as `IPv4Addr`.
-
-*Source: [Lean naming conventions][cn-acronyms].*
-
 <a name="naming-namespaces"></a>
 ## Namespaces and dot notation
 
@@ -183,6 +176,13 @@ def splitNonemptyWords (s : String) : List String := (s.splitOn " ").filter (· 
 
 *Source: [Lean naming conventions][cn-primes].*
 
+<a name="naming-acronyms"></a>
+## Acronyms
+
+Write acronyms of four or more letters as words: `Json`, `Http`, `parseJson`, `HttpServer`. Keep acronyms of up to three letters in one case: `IO`, `URL`, `toURL`, `urlPath`. Keep established mixed-case spellings such as `IPv4Addr`.
+
+*Source: [Lean naming conventions][cn-acronyms].*
+
 <a name="naming-locals"></a>
 ## Local names
 
@@ -245,7 +245,7 @@ Name packages and executables in lowercase. Name modules in `UpperCamelCase`. Th
 
 ---
 
-Previous: [Source code layout](layout.md) · [Contents](../README.md#rules) · Next: [Functions](functions.md)
+Previous: [API design and visibility](api.md) · [Contents](../README.md#rules) · Next: [Functions](functions.md)
 
 
 [cn-acronyms]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/doc/std/naming.md#acronyms

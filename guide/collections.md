@@ -78,7 +78,7 @@ def countWords (words : List String) : Std.HashMap String Nat :=
 
 ---
 
-Previous: [Type classes and instances](classes.md) · [Contents](../README.md#rules) · Next: [Error handling](errors.md)
+Previous: [Type classes and instances](classes.md) · [Contents](../README.md#rules) · Next: [Recursion and termination](recursion.md)
 
 
 [fpil-arrays]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/TypeClasses/Indexing.lean#L26

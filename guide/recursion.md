@@ -74,7 +74,7 @@ For inputs that can be large, use a loop or a recursive helper with an accumulat
 
 ---
 
-Previous: [Error handling](errors.md) · [Contents](../README.md#rules) · Next: [Proofs about programs](proofs.md)
+Previous: [Collections](collections.md) · [Contents](../README.md#rules) · Next: [Proofs about programs](proofs.md)
 
 
 [breitner]: https://lean-lang.org/blog/2024-1-11-recursive-definitions-in-lean

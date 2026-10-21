@@ -2,6 +2,41 @@
 
 Part of [A Lean Style Guide for Software](../README.md), a community draft. Every example compiles with Lean 4.35.0.
 
+<a name="layout-file"></a>
+## File structure
+
+Order each file like this:
+
+1. a licence or copyright comment, if your project uses one;
+2. `module`, if you use the module system (see [Modules](api.md#api-modules));
+3. the imports;
+4. a module docstring, `/-! … -/`, that says what the file is for;
+5. the code.
+
+Put a blank line between the imports and the module docstring.
+
+```lean
+module
+
+public import Std.Data.HashMap
+
+/-!
+# Word counts
+
+Counts how often each word occurs in a text.
+-/
+
+public section
+
+/-- Returns how often each space-separated word occurs in `text`. -/
+def wordCounts (text : String) : Std.HashMap String Nat :=
+  (text.splitOn " ").foldl (fun counts w => counts.insert w (counts.getD w 0 + 1)) {}
+
+end
+```
+
+*Sources: [Lean core style][cs-file], [Mathlib documentation][ml-doc].*
+
 <a name="layout-indentation"></a>
 ## Indentation
 
@@ -229,44 +264,9 @@ def greet (name : String) : IO Unit := do
 
 *Sources: [Lean core style][cs-do], [FPIL][fpil-do-lines].*
 
-<a name="layout-file"></a>
-## File structure
-
-Order each file like this:
-
-1. a licence or copyright comment, if your project uses one;
-2. `module`, if you use the module system (see [Modules](api.md#api-modules));
-3. the imports;
-4. a module docstring, `/-! … -/`, that says what the file is for;
-5. the code.
-
-Put a blank line between the imports and the module docstring.
-
-```lean
-module
-
-public import Std.Data.HashMap
-
-/-!
-# Word counts
-
-Counts how often each word occurs in a text.
--/
-
-public section
-
-/-- Returns how often each space-separated word occurs in `text`. -/
-def wordCounts (text : String) : Std.HashMap String Nat :=
-  (text.splitOn " ").foldl (fun counts w => counts.insert w (counts.getD w 0 + 1)) {}
-
-end
-```
-
-*Sources: [Lean core style][cs-file], [Mathlib documentation][ml-doc].*
-
 ---
 
-[Contents](../README.md#rules) · Next: [Naming](naming.md)
+Previous: [Projects and tooling](projects.md) · [Contents](../README.md#rules)
 
 
 [cs-decl]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/doc/std/style.md#top-level-commands-and-declarations

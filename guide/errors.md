@@ -112,24 +112,6 @@ Set the environment variable `LEAN_ABORT_ON_PANIC` to make the program abort on 
 
 *Sources: [Lean naming conventions][cn-data], [Google Haskell guide][google-partial], [Lean runtime][lean-panic], [checked with Lean 4.35][checked].*
 
-<a name="errors-document"></a>
-## Documenting failure
-
-Say in the docstring how a function fails: what `none` means, which errors it throws and when it panics.
-
-```lean
--- good
-/-- Returns the price of `item`, or `none` if the list doesn't contain it. -/
-def price? (prices : List (String × Nat)) (item : String) : Option Nat :=
-  prices.lookup item
-
-/-- Returns the price of `item`. Panics if the list doesn't contain it. -/
-def price! (prices : List (String × Nat)) (item : String) : Nat :=
-  (prices.lookup item).get!
-```
-
-*Source: [Rust API guidelines][rust-failure].*
-
 <a name="errors-catch-all"></a>
 ## Catching everything
 
@@ -149,9 +131,27 @@ def readConfig (path : System.FilePath) : IO String := do
 
 *Source: [OCaml guidelines][ocaml-exc].*
 
+<a name="errors-document"></a>
+## Documenting failure
+
+Say in the docstring how a function fails: what `none` means, which errors it throws and when it panics.
+
+```lean
+-- good
+/-- Returns the price of `item`, or `none` if the list doesn't contain it. -/
+def price? (prices : List (String × Nat)) (item : String) : Option Nat :=
+  prices.lookup item
+
+/-- Returns the price of `item`. Panics if the list doesn't contain it. -/
+def price! (prices : List (String × Nat)) (item : String) : Nat :=
+  (prices.lookup item).get!
+```
+
+*Source: [Rust API guidelines][rust-failure].*
+
 ---
 
-Previous: [Collections](collections.md) · [Contents](../README.md#rules) · Next: [Recursion and termination](recursion.md)
+Previous: [Effects and `do` notation](effects.md) · [Contents](../README.md#rules) · Next: [API design and visibility](api.md)
 
 [checked]: ../research/decisions.md#facts-checked-while-drafting
 [cn-data]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/doc/std/naming.md#naming-convention-for-data

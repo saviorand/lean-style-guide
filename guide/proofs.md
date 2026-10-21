@@ -79,7 +79,7 @@ Don't commit `sorry`. Lean accepts it as a proof of any statement, true or false
 
 ---
 
-Previous: [Recursion and termination](recursion.md) · [Contents](../README.md#rules) · Next: [Performance and low-level code](performance.md)
+Previous: [Recursion and termination](recursion.md) · [Contents](../README.md#rules) · Next: [Testing](testing.md)
 
 
 [cn-thm]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/doc/std/naming.md#naming-algorithm-for-theorems-and-some-definitions

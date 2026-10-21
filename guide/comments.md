@@ -49,7 +49,7 @@ Don't keep the history of a change or old versions of code in comments. Version 
 
 ---
 
-Previous: [Macros and notation](macros.md) · [Contents](../README.md#rules) · Next: [Documentation](documentation.md)
+Previous: [Documentation](documentation.md) · [Contents](../README.md#rules) · Next: [Macros and notation](macros.md)
 
 [agents-comments]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/AGENTS.md?plain=1#L75-L83
 [google-comments]: https://google.github.io/styleguide/haskellguide.html#comments

@@ -2,6 +2,13 @@
 
 Part of [A Lean Style Guide for Software](../README.md), a community draft. Every example compiles with Lean 4.35.0.
 
+<a name="tests-coverage"></a>
+## Test coverage
+
+Don't test what the types already guarantee. Test what types and proofs don't cover, such as input parsing, output formats and code that talks to files or the network. Also test performance, such as whether a hot loop updates its arrays in place.
+
+*Sources: FPIL on [types][fpil-types-tests] and [copying][fpil-copy].*
+
 <a name="tests-library"></a>
 ## A test library
 
@@ -39,24 +46,6 @@ def slug (title : String) : String :=
 
 *Source: [Lean Reference][ref-guardmsgs].*
 
-<a name="tests-meta-import"></a>
-## Tests and the module system
-
-If your test files are modules, import the code they `#eval` with `meta import`. Your editor makes every import available to `#eval`, but `lake build` doesn't. Without `meta import`, a test can pass in the editor and fail in the build.
-
-<!-- nocheck -->
-```lean
-module
-
-meta import MyApp.Slug
-
-/-- info: "hello-world" -/
-#guard_msgs in
-#eval slug "Hello  World"
-```
-
-*Source: [Lean Reference][ref-meta-eval].*
-
 <a name="tests-runtime"></a>
 ## Run-time tests
 
@@ -90,16 +79,27 @@ import Plausible
 
 *Sources: [testing practice][testing], [Google Haskell guide][google-quickcheck].*
 
-<a name="tests-coverage"></a>
-## Test coverage
+<a name="tests-meta-import"></a>
+## Tests and the module system
 
-Don't test what the types already guarantee. Test what types and proofs don't cover, such as input parsing, output formats and code that talks to files or the network. Also test performance, such as whether a hot loop updates its arrays in place.
+If your test files are modules, import the code they `#eval` with `meta import`. Your editor makes every import available to `#eval`, but `lake build` doesn't. Without `meta import`, a test can pass in the editor and fail in the build.
 
-*Sources: FPIL on [types][fpil-types-tests] and [copying][fpil-copy].*
+<!-- nocheck -->
+```lean
+module
+
+meta import MyApp.Slug
+
+/-- info: "hello-world" -/
+#guard_msgs in
+#eval slug "Hello  World"
+```
+
+*Source: [Lean Reference][ref-meta-eval].*
 
 ---
 
-Previous: [Documentation](documentation.md) · [Contents](../README.md#rules) · Next: [Projects and tooling](projects.md)
+Previous: [Proofs about programs](proofs.md) · [Contents](../README.md#rules) · Next: [Documentation](documentation.md)
 
 [fpil-copy]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/ProgramsProofs/InsertionSort.lean#L512-L513
 [fpil-types-tests]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/GettingToKnow/Summary.lean#L57

@@ -9,6 +9,13 @@ Don't write a macro when a function will do. Lean type-checks a function where y
 
 *Source: [Clojure guide][clj-macro].*
 
+<a name="macros-symbols"></a>
+## Custom operators
+
+Avoid new symbolic operators in program APIs. A named function is easier to search for and to read aloud. Use the standard operators through their classes instead.
+
+*Sources: [F# component design][fs-component], [Haskell (Kowainik)][kowainik].*
+
 <a name="macros-classes"></a>
 ## Standard notation through classes
 
@@ -83,16 +90,9 @@ Make your notation appear in Lean's output the way users write it. `notation`, `
 
 *Source: [Lean Reference][ref-delab].*
 
-<a name="macros-symbols"></a>
-## Custom operators
-
-Avoid new symbolic operators in program APIs. A named function is easier to search for and to read aloud. Use the standard operators through their classes instead.
-
-*Sources: [F# component design][fs-component], [Haskell (Kowainik)][kowainik].*
-
 ---
 
-Previous: [API design and visibility](api.md) · [Contents](../README.md#rules) · Next: [Comments](comments.md)
+Previous: [Comments](comments.md) · [Contents](../README.md#rules) · Next: [Performance and low-level code](performance.md)
 
 
 [clj-macro]: https://guide.clojure.style/#dont-write-macro-if-fn-will-do

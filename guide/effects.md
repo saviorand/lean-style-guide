@@ -1,118 +1,6 @@
-# `do` notation and effects
+# Effects and `do` notation
 
 Part of [A Lean Style Guide for Software](../README.md), a community draft. Every example compiles with Lean 4.35.0.
-
-<a name="do-early-return"></a>
-## Early return
-
-Handle special cases first and leave with `return` or `throw`, so the main path of the function isn't nested inside them.
-
-```lean
--- bad
-def withdraw (balance amount : Nat) : Except String Nat := do
-  if amount > 0 then
-    if amount ≤ balance then
-      return balance - amount
-    else
-      throw "insufficient funds"
-  else
-    throw "amount must be positive"
-```
-
-```lean
--- good
-def withdraw (balance amount : Nat) : Except String Nat := do
-  if amount = 0 then throw "amount must be positive"
-  if amount > balance then throw "insufficient funds"
-  return balance - amount
-```
-
-*Sources: [Lean core style][cs-do], [FPIL][fpil-early].*
-
-<a name="do-let-else"></a>
-## Unwrapping with a fallback
-
-Use `let some x := e | fallback`, or `let some x ← action | fallback`, to unwrap an `Option` when the failure case is short. A chain of these reads top to bottom, where nested `match`es drift to the right.
-
-```lean
--- bad
-def greeting (users : List (Nat × String)) (args : List String) : Except String String :=
-  match args.head? with
-  | none => .error "missing id"
-  | some arg =>
-    match arg.toNat? with
-    | none => .error s!"bad id {arg}"
-    | some id =>
-      match users.lookup id with
-      | none => .error s!"no user {id}"
-      | some name => .ok s!"Hello, {name}"
-```
-
-```lean
--- good
-def greeting (users : List (Nat × String)) (args : List String) : Except String String := do
-  let some arg := args.head? | throw "missing id"
-  let some id := arg.toNat? | throw s!"bad id {arg}"
-  let some name := users.lookup id | throw s!"no user {id}"
-  return s!"Hello, {name}"
-```
-
-*Source: [Lean core style][cs-do].*
-
-<a name="do-nested-actions"></a>
-## Nested actions
-
-Write `(← action)` inline when you use the result once and the line stays short. Bind the result with `let x ← action` when you use it more than once, or when the inline form gets hard to read.
-
-```lean
--- bad
-def echo : IO Unit := do
-  let stdin ← IO.getStdin
-  let line ← stdin.getLine
-  IO.print line
-```
-
-```lean
--- good
-def echo : IO Unit := do
-  let line ← (← IO.getStdin).getLine
-  IO.print line
-```
-
-*Source: [FPIL][fpil-nested].*
-
-<a name="do-mutation"></a>
-## Local mutation
-
-Inside a function, use `let mut` and `for` loops when they're clearer than a fold or an explicit state monad. The mutation stays local, and the function is still pure from the outside.
-
-```lean
--- bad
-def stats (xs : Array Int) : Int × Int × Nat :=
-  xs.foldl (fun (lo, hi, n) x => (min lo x, max hi x, if x < 0 then n + 1 else n)) (0, 0, 0)
-```
-
-```lean
--- good
-def stats (xs : Array Int) : Int × Int × Nat := Id.run do
-  let mut lo := 0
-  let mut hi := 0
-  let mut negatives := 0
-  for x in xs do
-    lo := min lo x
-    hi := max hi x
-    if x < 0 then negatives := negatives + 1
-  return (lo, hi, negatives)
-```
-
-*Source: [FPIL][fpil-mut].*
-
-<a name="do-return"></a>
-## `return` and `pure`
-
-End a `do` block with `return x`. Use `pure x` outside `do` blocks, as in `fun x => pure x`.
-
-*Source: [FRO practice][fro-d].*
 
 <a name="effects-pure-core"></a>
 ## Pure core and `IO` shell
@@ -179,25 +67,6 @@ def runApp (cfg : Config) : IO Unit := do
 
 *Sources: FPIL on [readers][fpil-reader] and [`abbrev` stacks][fpil-abbrev-stack].*
 
-<a name="effects-modify"></a>
-## Updating state
-
-Use `modify` to update state, instead of `get` followed by `set`. You can't set the wrong state by mistake. And no second reference to the state is left behind, so an array in the state can be updated in place.
-
-```lean
--- bad
-def bump : StateM Nat Unit := do
-  let n ← get
-  set (n + 1)
-```
-
-```lean
--- good
-def bump : StateM Nat Unit := modify (· + 1)
-```
-
-*Source: [FPIL][fpil-modify].*
-
 <a name="effects-resources"></a>
 ## Releasing resources
 
@@ -251,9 +120,140 @@ Don't `#eval` actions with side effects in library files. Lean runs every `#eval
 
 *Source: [FPIL][fpil-eval].*
 
+<a name="do-early-return"></a>
+## Early return
+
+Handle special cases first and leave with `return` or `throw`, so the main path of the function isn't nested inside them.
+
+```lean
+-- bad
+def withdraw (balance amount : Nat) : Except String Nat := do
+  if amount > 0 then
+    if amount ≤ balance then
+      return balance - amount
+    else
+      throw "insufficient funds"
+  else
+    throw "amount must be positive"
+```
+
+```lean
+-- good
+def withdraw (balance amount : Nat) : Except String Nat := do
+  if amount = 0 then throw "amount must be positive"
+  if amount > balance then throw "insufficient funds"
+  return balance - amount
+```
+
+*Sources: [Lean core style][cs-do], [FPIL][fpil-early].*
+
+<a name="do-let-else"></a>
+## Unwrapping with a fallback
+
+Use `let some x := e | fallback`, or `let some x ← action | fallback`, to unwrap an `Option` when the failure case is short. A chain of these reads top to bottom, where nested `match`es drift to the right.
+
+```lean
+-- bad
+def greeting (users : List (Nat × String)) (args : List String) : Except String String :=
+  match args.head? with
+  | none => .error "missing id"
+  | some arg =>
+    match arg.toNat? with
+    | none => .error s!"bad id {arg}"
+    | some id =>
+      match users.lookup id with
+      | none => .error s!"no user {id}"
+      | some name => .ok s!"Hello, {name}"
+```
+
+```lean
+-- good
+def greeting (users : List (Nat × String)) (args : List String) : Except String String := do
+  let some arg := args.head? | throw "missing id"
+  let some id := arg.toNat? | throw s!"bad id {arg}"
+  let some name := users.lookup id | throw s!"no user {id}"
+  return s!"Hello, {name}"
+```
+
+*Source: [Lean core style][cs-do].*
+
+<a name="do-mutation"></a>
+## Local mutation
+
+Inside a function, use `let mut` and `for` loops when they're clearer than a fold or an explicit state monad. The mutation stays local, and the function is still pure from the outside.
+
+```lean
+-- bad
+def stats (xs : Array Int) : Int × Int × Nat :=
+  xs.foldl (fun (lo, hi, n) x => (min lo x, max hi x, if x < 0 then n + 1 else n)) (0, 0, 0)
+```
+
+```lean
+-- good
+def stats (xs : Array Int) : Int × Int × Nat := Id.run do
+  let mut lo := 0
+  let mut hi := 0
+  let mut negatives := 0
+  for x in xs do
+    lo := min lo x
+    hi := max hi x
+    if x < 0 then negatives := negatives + 1
+  return (lo, hi, negatives)
+```
+
+*Source: [FPIL][fpil-mut].*
+
+<a name="effects-modify"></a>
+## Updating state
+
+Use `modify` to update state, instead of `get` followed by `set`. You can't set the wrong state by mistake. And no second reference to the state is left behind, so an array in the state can be updated in place.
+
+```lean
+-- bad
+def bump : StateM Nat Unit := do
+  let n ← get
+  set (n + 1)
+```
+
+```lean
+-- good
+def bump : StateM Nat Unit := modify (· + 1)
+```
+
+*Source: [FPIL][fpil-modify].*
+
+<a name="do-nested-actions"></a>
+## Nested actions
+
+Write `(← action)` inline when you use the result once and the line stays short. Bind the result with `let x ← action` when you use it more than once, or when the inline form gets hard to read.
+
+```lean
+-- bad
+def echo : IO Unit := do
+  let stdin ← IO.getStdin
+  let line ← stdin.getLine
+  IO.print line
+```
+
+```lean
+-- good
+def echo : IO Unit := do
+  let line ← (← IO.getStdin).getLine
+  IO.print line
+```
+
+*Source: [FPIL][fpil-nested].*
+
+<a name="do-return"></a>
+## `return` and `pure`
+
+End a `do` block with `return x`. Use `pure x` outside `do` blocks, as in `fun x => pure x`.
+
+*Source: [FRO practice][fro-d].*
+
 ---
 
-Previous: [Functions](functions.md) · [Contents](../README.md#rules) · Next: [Data modelling](data.md)
+Previous: [Data modelling](data.md) · [Contents](../README.md#rules) · Next: [Error handling](errors.md)
 
 [cs-do]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/doc/std/style.md#do-notation
 [fpil-abbrev-stack]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/MonadTransformers/ReaderIO.lean#L337

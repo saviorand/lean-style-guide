@@ -73,7 +73,7 @@ Don't reformat code you aren't otherwise changing, because it buries real change
 
 ---
 
-Previous: [Testing](testing.md) · [Contents](../README.md#rules)
+Previous: [Performance and low-level code](performance.md) · [Contents](../README.md#rules) · Next: [Source code layout](layout.md)
 
 [batteries-docs]: https://github.com/leanprover-community/batteries/blob/4453b52d2468f4c346a8711d728c0742e7483c9b/lakefile.toml#L7
 [checked]: ../research/decisions.md#facts-checked-while-drafting
