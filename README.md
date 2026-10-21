@@ -2,30 +2,19 @@
 
 *Community draft, October 2026. Targets Lean 4.35.*
 
-This guide describes how to write programs, libraries and tools in Lean 4. It covers program structure, naming, testing, documentation and layout. It's a community project, not an official document of the Lean FRO or of Mathlib. It builds on Lean's own [style guide](https://github.com/leanprover/lean4/blob/master/doc/std/style.md) and [naming conventions](https://github.com/leanprover/lean4/blob/master/doc/std/naming.md) for the standard library, and leaves formalized mathematics to [Mathlib's style guide](https://leanprover-community.github.io/contribute/style.html). The evidence behind each rule is in [research/](research/).
+This guide describes how to write programs, libraries and tools in Lean 4. It's a community project, not an official document of the Lean FRO or of Mathlib. It builds on Lean's own [style guide](https://github.com/leanprover/lean4/blob/master/doc/std/style.md) and [naming conventions](https://github.com/leanprover/lean4/blob/master/doc/std/naming.md) for the standard library, and leaves formalized mathematics to [Mathlib's style guide](https://leanprover-community.github.io/contribute/style.html). The evidence behind each rule is in [research/](research/).
 
-## Introduction
-
-### Guiding principles
+## Guiding principles
 
 - Code is read far more often than it is written, so the rules favour the reader ([Clojure guide][clj-principles]).
 - Names should be guessable ([Lean naming conventions][cn-intro]).
 - Where an established practice competes with a subjectively better one, follow the established practice ([Clojure guide][clj-principles], [Simple Haskell][simple-haskell]).
 - Put cheap guarantees in types, test the rest, and prove what matters most ([FPIL][fpil-proofs], [Boring Haskell Manifesto][boring-haskell]).
-
-### Consistency
-
-Consistency with this guide matters. Consistency within a project matters more, and consistency within one file matters most ([PEP 8][pep8-consistency], [Kowainik][kowainik-existing]). Don't break backward compatibility to follow a rule, and don't rewrite old code only to match the guide ([PEP 8][pep8-consistency]).
-
-### Rule format
-
-The [list of rules](#rules) below starts with program design and ends with formatting, and each chapter puts its most important rules first. It gives each rule in one line, followed by its ID, such as `data-illegal-states`. The ID links to the rule's section in a chapter page, with the reasons, usually a `-- bad` and a `-- good` example, and its sources. You can cite a rule by its ID in code review.
-
-"Use", "Write" and "Don't" mean always. "Prefer" and "Avoid" mean usually. "Consider" means it's often worth it. Every example compiles with Lean 4.35.0, including the bad ones. FPIL is [*Functional Programming in Lean*](https://lean-lang.org/functional_programming_in_lean/), and "FRO practice" links to measurements of the Lean FRO's own program code.
-
-Lean has no official formatter yet, though the Lean FRO plans to ship one ([FRO roadmap][fro-roadmap]). When it's released, its output takes precedence over the layout rules here.
+- Consistency within a project matters more than this guide, and consistency within a file matters most. Don't rewrite old code or break backward compatibility just to follow a rule ([PEP 8][pep8-consistency], [Kowainik][kowainik-existing]).
 
 ## Rules
+
+"Use", "Write" and "Don't" mean always, "Prefer" and "Avoid" mean usually, and "Consider" means it's often worth it. Once Lean's official formatter is released ([FRO roadmap][fro-roadmap]), its output takes precedence over the layout rules.
 
 ### [Data modelling](guide/data.md)
 
