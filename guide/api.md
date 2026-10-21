@@ -5,9 +5,9 @@ Part of [A Lean Style Guide for Software](../README.md), a community draft. Ever
 <a name="api-surface"></a>
 ## Small public surface
 
-Make public only what callers need. You have to keep every public declaration working or deprecate it.
+Make public only what callers need. You have to keep every public declaration working or deprecate it, and each `public` you remove saves rebuilds.
 
-*Source: [Rust API guidelines][rust-private].*
+*Source: [Lean Reference][ref-modules].*
 
 <a name="api-modules"></a>
 ## Modules
@@ -94,21 +94,6 @@ def getUrl (url : String) : String := fetchUrl url
 
 *Source: [Mathlib style][ml-deprecation].*
 
-<a name="api-open"></a>
-## `open`
-
-Open a namespace for a whole file only if the file uses it throughout. For a single declaration, write `open Foo in` in front of it.
-
-```lean
-import Std.Data.HashMap
-
--- good
-open Std in
-def emptyCounts : HashMap String Nat := {}
-```
-
-*Source: [F# component design][fs-component].*
-
 <a name="api-variable"></a>
 ## `variable`
 
@@ -142,7 +127,5 @@ Previous: [Error handling](errors.md) · [Contents](../README.md#rules) · Next:
 [cn-std]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/doc/std/naming.md#the-std-namespace
 [fpil-protected]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/Monads/IO.lean#L153
 [fro-all]: ../research/author-survey.md
-[fs-component]: https://learn.microsoft.com/en-us/dotnet/fsharp/style-guide/component-design-guidelines
 [ml-deprecation]: https://leanprover-community.github.io/contribute/style.html#deprecation
 [ref-modules]: https://github.com/leanprover/reference-manual/blob/400f1682df64bc00e485215bfa4398d24c0f220c/Manual/SourceFiles.lean#L843-L848
-[rust-private]: https://rust-lang.github.io/api-guidelines/future-proofing.html#c-struct-private

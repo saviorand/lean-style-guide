@@ -102,7 +102,7 @@ where
 <a name="functions-options"></a>
 ## Many parameters
 
-If a function takes more than about four parameters, or several of the same type, group them in a structure with default values. Callers then name each value and leave out the ones they don't change.
+If a function takes more than about four parameters, or several of the same type, group them in a structure with default values. Callers then name each value and leave out the ones they don't change. The standard library's `IO.Process.spawn` takes its arguments this way.
 
 ```lean
 -- bad
@@ -127,12 +127,12 @@ def connect (opts : ConnectOptions) : String :=
 def localConnection := connect { host := "localhost", useTls := false }
 ```
 
-*Source: [Clojure guide][clj-params].*
+*Source: [standard library][std-spawnargs].*
 
 <a name="functions-bool-args"></a>
 ## Boolean arguments
 
-Avoid `Bool` parameters that switch a function between two behaviours. Use an inductive type with named constructors, so each call site says what it means.
+Pass a `Bool` argument by name, as in `(lastFirst := true)`, because a bare `true` doesn't say what it switches on. If most callers want the same value, make it the parameter's default. Lake works this way: its `proc` function takes `(quiet := false)`, and callers that want no output write `(quiet := true)`.
 
 ```lean
 -- bad
@@ -144,19 +144,13 @@ def label := formatName "Ada" "Lovelace" true
 
 ```lean
 -- good
-inductive NameOrder where
-  | firstLast
-  | lastFirst
+def formatName (first last : String) (lastFirst : Bool := false) : String :=
+  if lastFirst then s!"{last}, {first}" else s!"{first} {last}"
 
-def formatName (first last : String) (order : NameOrder) : String :=
-  match order with
-  | .firstLast => s!"{first} {last}"
-  | .lastFirst => s!"{last}, {first}"
-
-def label := formatName "Ada" "Lovelace" .lastFirst
+def label := formatName "Ada" "Lovelace" (lastFirst := true)
 ```
 
-*Sources: [Rust API guidelines][rust-custom], [Haskell (Kowainik)][kowainik-data].*
+*Sources: [Lake's `proc`][lake-proc], [measured in Std and Lake][checked].*
 
 <a name="functions-exhaustive"></a>
 ## Exhaustive matches
@@ -208,26 +202,6 @@ def report (words : List String) : String :=
 
 *Sources: [FPIL][fpil-pipe], [Mathlib style][ml-delims].*
 
-<a name="functions-point-free"></a>
-## Point-free style
-
-Avoid chains of more than two functions joined with `∘`. Name the argument instead, so the reader can follow the data.
-
-```lean
--- bad
-def slug : String → String :=
-  String.intercalate "-" ∘ List.filter (· != "") ∘ (String.splitOn · " ") ∘ String.toLower
-```
-
-```lean
--- good
-def slug (title : String) : String :=
-  let words := (title.toLower.splitOn " ").filter (· != "")
-  "-".intercalate words
-```
-
-*Sources: [Google Haskell guide][google-pointfree], [Haskell (Kowainik)][kowainik], [Haskell (Tibell)][tibell], [F# conventions][fs-pointfree].*
-
 <a name="functions-lambdas"></a>
 ## Lambdas
 
@@ -252,7 +226,6 @@ def names (people : List (String × Nat)) : List String := people.map fun (name,
 Previous: [Naming](naming.md) · [Contents](../README.md#rules) · Next: [Type classes and instances](classes.md)
 
 [checked]: ../research/decisions.md#facts-checked-while-drafting
-[clj-params]: https://guide.clojure.style/#function-positional-parameter-limit
 [cs-notation]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/doc/std/style.md#notation-and-unicode
 [fpil-annot]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/GettingToKnow/Conveniences.lean#L238-L246
 [fpil-concerns]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/Monads.lean#L111-L113
@@ -260,13 +233,9 @@ Previous: [Naming](naming.md) · [Contents](../README.md#rules) · Next: [Type c
 [fpil-implicit]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/GettingToKnow/Polymorphism.lean#L288
 [fpil-pipe]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/MonadTransformers/Conveniences.lean#L25-L38
 [fro-c]: ../research/author-survey.md#consistent-across-authors
-[fs-pointfree]: https://learn.microsoft.com/en-us/dotnet/fsharp/style-guide/conventions#partial-application-and-point-free-programming
-[google-pointfree]: https://google.github.io/styleguide/haskellguide.html#point-free
 [google-types]: https://google.github.io/styleguide/haskellguide.html#type-declarations
-[kowainik]: https://kowainik.github.io/posts/2019-02-06-style-guide
-[kowainik-data]: https://kowainik.github.io/posts/2019-02-06-style-guide#data-types
+[lake-proc]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/lake/Lake/Util/Proc.lean#L38-L40
 [ml-autoimplicit]: https://github.com/leanprover-community/mathlib4/blob/7bb03b4c5313d552989ba5b1c6d3f0f436f65d73/lakefile.lean#L44
 [ml-delims]: https://leanprover-community.github.io/contribute/style.html#whitespace-and-delimiters
 [ocaml-match]: https://ocaml.org/docs/guidelines#pattern-matching-warnings
-[rust-custom]: https://rust-lang.github.io/api-guidelines/type-safety.html#c-custom-type
-[tibell]: https://github.com/tibbe/haskell-style-guide/blob/master/haskell-style.md
+[std-spawnargs]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/Init/System/IO.lean#L1434-L1455

@@ -37,6 +37,8 @@ git = "https://github.com/paulbutcher/lean-routing"
 rev = "v0.8.0"
 ```
 
+*Source: [Lake README][lake-manifest].*
+
 <a name="project-options"></a>
 ## Lean options
 
@@ -69,7 +71,7 @@ Keep Lean's built-in linters, such as the unused-variables linter, turned on.
 
 Don't reformat code you aren't otherwise changing, because it buries real changes in the diff. When an official formatter is released, run it over the whole project in one commit that does nothing else.
 
-*Source: [Haskell (Kowainik)][kowainik-existing].*
+*Source: [Lean contributing guide][lean-contributing].*
 
 ---
 
@@ -79,7 +81,8 @@ Previous: [Performance and low-level code](performance.md) · [Contents](../READ
 [checked]: ../research/decisions.md#facts-checked-while-drafting
 [fpil-main]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/HelloWorld/StartingAProject.lean#L40
 [google-warnings]: https://google.github.io/styleguide/haskellguide.html#warnings
-[kowainik-existing]: https://kowainik.github.io/posts/2019-02-06-style-guide#rule-of-thumb-when-working-with-existing-source-code
+[lake-manifest]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/lake/README.md?plain=1#L441
+[lean-contributing]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/CONTRIBUTING.md?plain=1#L35
 [ml-autoimplicit]: https://github.com/leanprover-community/mathlib4/blob/7bb03b4c5313d552989ba5b1c6d3f0f436f65d73/lakefile.lean#L44
 [realworld]: https://github.com/saviorand/lean-realworld-example-app/blob/a25664892b8bdf84722bcc24d31286560f975186/lakefile.toml#L13
 [survey-linters]: ../research/stdlib-survey.md#15-tooling-linters-and-formatters

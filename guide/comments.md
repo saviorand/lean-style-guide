@@ -38,7 +38,7 @@ structure Buffer where
 def Buffer.remaining (b : Buffer) : Nat := b.data.size - b.start
 ```
 
-*Source: [Alexis King][king].*
+*Source: [lean4 `AGENTS.md`][agents-comments].*
 
 <a name="comments-history"></a>
 ## History and dead code
@@ -53,4 +53,3 @@ Previous: [Documentation](documentation.md) · [Contents](../README.md#rules) ·
 
 [agents-comments]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/AGENTS.md?plain=1#L75-L83
 [google-comments]: https://google.github.io/styleguide/haskellguide.html#comments
-[king]: https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/

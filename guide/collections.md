@@ -76,6 +76,8 @@ def countWords (words : List String) : Std.HashMap String Nat :=
   words.foldl (fun counts w => counts.insert w (counts.getD w 0 + 1)) {}
 ```
 
+*Sources: the docstrings of [`Std.HashMap`][std-hashmap] and [`Std.TreeMap`][std-treemap].*
+
 ---
 
 Previous: [Type classes and instances](classes.md) · [Contents](../README.md#rules) · Next: [Recursion and termination](recursion.md)
@@ -86,3 +88,5 @@ Previous: [Type classes and instances](classes.md) · [Contents](../README.md#ru
 [fpil-index]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/PropsProofsIndexing.lean#L287-L331
 [fpil-unique]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/ProgramsProofs/InsertionSort.lean#L691
 [ref-array]: https://github.com/leanprover/reference-manual/blob/400f1682df64bc00e485215bfa4398d24c0f220c/Manual/BasicTypes/Array.lean#L28-L38
+[std-hashmap]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/Std/Data/HashMap/Basic.lean#L38-L45
+[std-treemap]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/Std/Data/TreeMap/Basic.lean#L34-L39

@@ -6,9 +6,9 @@ This guide describes how to write programs, libraries and tools in Lean 4. It's 
 
 ## Guiding principles
 
-- Code is read far more often than it is written, so the rules favour the reader ([Clojure guide][clj-principles]).
+- Code is read far more often than it is written, so the rules favour the reader ([PEP 8][pep8-consistency], [OCaml guidelines][ocaml-readable]).
 - Names should be guessable ([Lean naming conventions][cn-intro]).
-- Where an established practice competes with a subjectively better one, follow the established practice ([Clojure guide][clj-principles], [Simple Haskell][simple-haskell]).
+- Where an established practice competes with a subjectively better one, follow the established practice ([Lean contributing guide][lean-contributing], [Simple Haskell][simple-haskell]).
 - Put cheap guarantees in types, test the rest, and prove what matters most ([FPIL][fpil-proofs], [Boring Haskell Manifesto][boring-haskell]).
 - Consistency within a project matters more than this guide, and consistency within a file matters most. Don't rewrite old code or break backward compatibility just to follow a rule ([PEP 8][pep8-consistency], [Kowainik][kowainik-existing]).
 
@@ -60,7 +60,6 @@ This guide describes how to write programs, libraries and tools in Lean 4. It's 
 - Mark helpers `private`, or put them in an `Internal` namespace ([`api-private`](guide/api.md#api-private)).
 - Mark a declaration `protected` if its short name would clash after `open` ([`api-protected`](guide/api.md#api-protected)).
 - Deprecate a public declaration with `@[deprecated]` before you rename or remove it ([`api-deprecation`](guide/api.md#api-deprecation)).
-- Use `open … in` for a single declaration, and open for a whole file only if the file uses the namespace throughout ([`api-open`](guide/api.md#api-open)).
 - Avoid `variable` in program code ([`api-variable`](guide/api.md#api-variable)).
 
 ### [Naming](guide/naming.md)
@@ -85,10 +84,9 @@ This guide describes how to write programs, libraries and tools in Lean 4. It's 
 - Keep each function short enough to read at once ([`functions-size`](guide/functions.md#functions-size)).
 - Put single-use helpers in a `where` clause, and name a recursive helper `go` ([`functions-helpers`](guide/functions.md#functions-helpers)).
 - Group more than about four parameters in a structure with default values ([`functions-options`](guide/functions.md#functions-options)).
-- Avoid `Bool` parameters that switch a function between two behaviours ([`functions-bool-args`](guide/functions.md#functions-bool-args)).
+- Pass `Bool` arguments by name, as in `(quiet := true)` ([`functions-bool-args`](guide/functions.md#functions-bool-args)).
 - List every constructor when you match on your own types, rather than ending with `_` ([`functions-exhaustive`](guide/functions.md#functions-exhaustive)).
 - Use `|>`, `|>.` and `<|` to avoid nested parentheses, and don't use `$` ([`functions-pipelines`](guide/functions.md#functions-pipelines)).
-- Avoid chains of more than two functions joined with `∘` ([`functions-point-free`](guide/functions.md#functions-point-free)).
 - Write lambdas as `fun x => e`, never with `λ` or `↦` ([`functions-lambdas`](guide/functions.md#functions-lambdas)).
 
 ### [Type classes and instances](guide/classes.md)
@@ -148,7 +146,6 @@ This guide describes how to write programs, libraries and tools in Lean 4. It's 
 
 ### [Macros and notation](guide/macros.md)
 
-- Don't write a macro when a function will do ([`macros-functions-first`](guide/macros.md#macros-functions-first)).
 - Avoid new symbolic operators in program APIs ([`macros-symbols`](guide/macros.md#macros-symbols)).
 - Get standard notation by implementing classes such as `Add` and `GetElem` ([`macros-classes`](guide/macros.md#macros-classes)).
 - Use macros for syntax sugar, and elaborators when the translation needs types or decisions ([`macros-macro-or-elab`](guide/macros.md#macros-macro-or-elab)).
@@ -205,11 +202,12 @@ python3 tools/check_examples.py
 The text of this guide is licensed under [CC BY 4.0](LICENSE). The code examples, [tools/](tools/) and [research/scripts/](research/scripts/) are licensed under [Apache-2.0](LICENSE-CODE). Material quoted in [research/](research/) stays under its original licence, listed for each source in [research/index.md](research/index.md).
 
 [boring-haskell]: https://www.snoyman.com/blog/2019/11/boring-haskell-manifesto/#power-to-weight-ratio
-[clj-principles]: https://github.com/bbatsov/clojure-style-guide/blob/2bc3d2c5d940ab87326860fe68e9fcd849cbeb0a/README.adoc?plain=1#L75-L103
 [cn-intro]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/doc/std/naming.md#standard-library-naming-conventions
 [fpil-proofs]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/ProgramsProofs.lean#L37-L41
 [fro-roadmap]: https://lean-lang.org/fro/roadmap/y4-1/
 [google-parting]: https://google.github.io/styleguide/haskellguide.html#parting-words
 [kowainik-existing]: https://kowainik.github.io/posts/2019-02-06-style-guide#rule-of-thumb-when-working-with-existing-source-code
+[lean-contributing]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/CONTRIBUTING.md?plain=1#L44
+[ocaml-readable]: https://ocaml.org/docs/guidelines#be-simple-and-readable
 [pep8-consistency]: https://peps.python.org/pep-0008/#a-foolish-consistency-is-the-hobgoblin-of-little-minds
 [simple-haskell]: https://www.simplehaskell.org/

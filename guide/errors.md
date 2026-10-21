@@ -52,7 +52,7 @@ instance : ToString AgeError where
     | .tooLarge n => s!"age too large: {n}"
 ```
 
-*Source: [Rust API guidelines][rust-good-err].*
+*Sources: [`IO.Error`][std-ioerror] in the standard library, [`CliError`][lake-clierror] in Lake.*
 
 <a name="errors-io"></a>
 ## Errors in `IO` code
@@ -147,7 +147,7 @@ def price! (prices : List (String × Nat)) (item : String) : Nat :=
   (prices.lookup item).get!
 ```
 
-*Source: [Rust API guidelines][rust-failure].*
+*Source: standard library docstrings, such as [`Array.swapAt!`][std-doc-panics] and [`IO.FS.createDir`][std-doc-throws].*
 
 ---
 
@@ -158,7 +158,9 @@ Previous: [Effects and `do` notation](effects.md) · [Contents](../README.md#rul
 [fpil-except]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/Monads.lean#L206-L218
 [fro-d]: ../research/author-survey.md#author-dependent-no-fro-convention
 [google-partial]: https://google.github.io/styleguide/haskellguide.html#partial-functions
+[lake-clierror]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/lake/Lake/CLI/Error.lean#L16
 [lean-panic]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/runtime/object.cpp#L80
 [ocaml-exc]: https://ocaml.org/docs/guidelines#exceptions
-[rust-failure]: https://rust-lang.github.io/api-guidelines/documentation.html#c-failure
-[rust-good-err]: https://rust-lang.github.io/api-guidelines/interoperability.html#c-good-err
+[std-doc-panics]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/Init/Data/Array/Basic.lean#L447-L455
+[std-doc-throws]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/Init/System/IO.lean#L896-L900
+[std-ioerror]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/Init/System/IOError.lean#L24

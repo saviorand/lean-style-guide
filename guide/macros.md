@@ -2,19 +2,12 @@
 
 Part of [A Lean Style Guide for Software](../README.md), a community draft. Every example compiles with Lean 4.35.0.
 
-<a name="macros-functions-first"></a>
-## Functions before macros
-
-Don't write a macro when a function will do. Lean type-checks a function where you define it, so its errors point at your code. A macro's errors appear where it's used, after expansion.
-
-*Source: [Clojure guide][clj-macro].*
-
 <a name="macros-symbols"></a>
 ## Custom operators
 
 Avoid new symbolic operators in program APIs. A named function is easier to search for and to read aloud. Use the standard operators through their classes instead.
 
-*Sources: [F# component design][fs-component], [Haskell (Kowainik)][kowainik].*
+*Sources: [Lean core style][cs-notation], [measured in Lake][checked].*
 
 <a name="macros-classes"></a>
 ## Standard notation through classes
@@ -95,11 +88,9 @@ Make your notation appear in Lean's output the way users write it. `notation`, `
 Previous: [Comments](comments.md) · [Contents](../README.md#rules) · Next: [Performance and low-level code](performance.md)
 
 
-[clj-macro]: https://guide.clojure.style/#dont-write-macro-if-fn-will-do
+[checked]: ../research/decisions.md#facts-checked-while-drafting
 [cs-file]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/doc/std/style.md#basic-file-structure
 [cs-notation]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/doc/std/style.md#notation-and-unicode
-[fs-component]: https://learn.microsoft.com/en-us/dotnet/fsharp/style-guide/component-design-guidelines
-[kowainik]: https://kowainik.github.io/posts/2019-02-06-style-guide
 [mp-macro]: https://github.com/leanprover-community/lean4-metaprogramming-book/blob/9bb0918b272015ad6e39e6db6220fec378a35d8a/lean/main/02_overview.lean#L153-L155
 [mp-overlap]: https://github.com/leanprover-community/lean4-metaprogramming-book/blob/9bb0918b272015ad6e39e6db6220fec378a35d8a/lean/main/06_macros.lean#L57-L78
 [ref-delab]: https://github.com/leanprover/reference-manual/blob/400f1682df64bc00e485215bfa4398d24c0f220c/Manual/NotationsMacros/Delab.lean#L33
