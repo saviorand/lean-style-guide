@@ -1,8 +1,12 @@
 # A Lean Style Guide for Software
 
-*Community draft, October 2026. Targets Lean 4.35.*
+*Community draft, October 2026.*
 
-This guide describes how to write programs, libraries and tools in Lean 4. It's a community project, not an official document of the Lean FRO or of Mathlib. It builds on Lean's own [style guide](https://github.com/leanprover/lean4/blob/master/doc/std/style.md) and [naming conventions](https://github.com/leanprover/lean4/blob/master/doc/std/naming.md) for the standard library, and leaves formalized mathematics to [Mathlib's style guide](https://leanprover-community.github.io/contribute/style.html). The evidence behind each rule is in [research/](research/).
+This guide describes how to write programs, libraries and tools in Lean 4, focusing on general-purpose software, not math. 
+
+It's a community project, not an official document of the Lean FRO or of Mathlib. 
+
+Main resources used here are Lean's own [style guide](https://github.com/leanprover/lean4/blob/master/doc/std/style.md) and [naming conventions](https://github.com/leanprover/lean4/blob/master/doc/std/naming.md) for the standard library. Some rules were borrowed from other language ecosystems where they make sense for Lean, e.g Haskell, OCaml
 
 ## Guiding principles
 
