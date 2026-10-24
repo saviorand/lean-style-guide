@@ -151,7 +151,7 @@ def readConfig (path : System.FilePath) : IO String :=
 *Sources: standard library docstrings, such as [`Array.swapAt!`][std-doc-panics] and [`IO.FS.createDir`][std-doc-throws]; [Paul Butcher, issue #1][issue-1].*
 ---
 
-Previous: [Effects and `do` notation](effects.md) · [Contents](../README.md#rules) · Next: [API design and visibility](api.md)
+Previous: [Effects and `do` notation](effects.md) · [Contents](../README.md#rules) · Next: [Logging](logging.md)
 
 [checked]: ../research/decisions.md#facts-checked-while-drafting
 [cn-data]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/doc/std/naming.md#naming-convention-for-data

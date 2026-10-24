@@ -53,6 +53,13 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 - Use `panic!` and `!` functions only when essential: for bugs, where you can't pass a proof instead, and never to reject bad input ([`errors-panics`](guide/errors.md#errors-panics)).
 - Say in the docstring how a function fails when its type doesn't already say so ([`errors-document`](guide/errors.md#errors-document)).
 
+### [Logging](guide/logging.md)
+
+- Log where the code makes a decision that its result can't express ([`logging-decisions`](guide/logging.md#logging-decisions)).
+- Record the value that decided the branch, not just the outcome ([`logging-values`](guide/logging.md#logging-values)).
+- Log what was asked for, since a span records only the route ([`logging-requests`](guide/logging.md#logging-requests)).
+- Don't log ordinary success when a span already records the request ([`logging-success`](guide/logging.md#logging-success)).
+
 ### [API design and visibility](guide/api.md)
 
 - Make public only what callers need ([`api-surface`](guide/api.md#api-surface)).
@@ -165,6 +172,7 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 
 - Start from the layout `lake new` creates, with a small `Main.lean` ([`project-layout`](guide/projects.md#project-layout)).
 - Commit `lean-toolchain` and `lake-manifest.json`, and require dependencies at release tags ([`project-dependencies`](guide/projects.md#project-dependencies)).
+- Declare files that you embed with `include_str` as Lake inputs in the library's `needs`, or editing them rebuilds nothing ([`project-embedded-files`](guide/projects.md#project-embedded-files)).
 - Set `autoImplicit = false` in the Lake configuration ([`project-options`](guide/projects.md#project-options)).
 - Check for warnings in CI with `lake build --wfail`, and don't set `warningAsError` in a library ([`project-warnings`](guide/projects.md#project-warnings)).
 - Keep Lean's built-in linters on ([`project-linters`](guide/projects.md#project-linters)).

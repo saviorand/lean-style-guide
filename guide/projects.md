@@ -39,6 +39,29 @@ rev = "v0.8.0"
 
 *Source: [Lake README][lake-manifest].*
 
+
+<a name="project-embedded-files"></a>
+## Embedded files
+
+If a module embeds a file with `include_str`, declare the file in the Lake configuration as an `input_file`, or its directory as an `input_dir`, and list it in the library's `needs`. Lake decides whether to rebuild a module from its source and imports, not from the files it reads with `include_str`. Without the declaration, editing the embedded file rebuilds nothing and the old contents stay compiled in, and neither touching the module nor building it explicitly helps. Set `text := true` for a text file, so that a change of line endings alone doesn't count as a change.
+
+<!-- nocheck -->
+```lean
+-- lakefile.lean
+import Lake
+open Lake DSL
+
+package myapp
+
+input_file greeting where
+  path := "MyApp/greeting.txt"
+  text := true
+
+lean_lib MyApp where
+  needs := #[greeting]
+```
+
+*Sources: [Lake README][lake-inputs], [Paul Butcher, issue #1][issue-1], [checked with Lean 4.35][checked].*
 <a name="project-options"></a>
 ## Lean options
 
@@ -79,6 +102,8 @@ Previous: [Performance and low-level code](performance.md) · [Contents](../READ
 [checked]: ../research/decisions.md#facts-checked-while-drafting
 [fpil-main]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/HelloWorld/StartingAProject.lean#L40
 [google-warnings]: https://google.github.io/styleguide/haskellguide.html#warnings
+[issue-1]: https://github.com/saviorand/lean-style-guide/issues/1
+[lake-inputs]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/lake/README.md?plain=1#L276-L288
 [lake-manifest]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/lake/README.md?plain=1#L441
 [lean-contributing]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/CONTRIBUTING.md?plain=1#L35
 [ml-autoimplicit]: https://github.com/leanprover-community/mathlib4/blob/7bb03b4c5313d552989ba5b1c6d3f0f436f65d73/lakefile.lean#L44

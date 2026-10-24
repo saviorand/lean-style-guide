@@ -121,7 +121,7 @@ def joinAll {α : Type} [ToString α] (sep : String) (xs : List α) : String :=
 
 ---
 
-Previous: [Error handling](errors.md) · [Contents](../README.md#rules) · Next: [Naming](naming.md)
+Previous: [Logging](logging.md) · [Contents](../README.md#rules) · Next: [Naming](naming.md)
 
 
 [agda-variable]: https://github.com/agda/agda-stdlib/blob/2ffa8b7d4e8e818717ad643d184f055a4d1b0447/doc/style-guide.md
