@@ -92,7 +92,9 @@ def fetchUrl (url : String) : String := url
 def getUrl (url : String) : String := fetchUrl url
 ```
 
-*Source: [Mathlib style][ml-deprecation].*
+Changing a public declaration's signature or default values, or a format that your code reads or writes, affects callers as much as a rename does. `@[deprecated]` attaches only to names, so it can't warn anyone about a changed signature or default. Where callers need that warning, make the change under a new name and deprecate the old one. Note every such change in the changelog.
+
+*Sources: [Mathlib style][ml-deprecation], [Paul Butcher, issue #1][issue-1].*
 
 <a name="api-variable"></a>
 ## `variable`
@@ -119,7 +121,7 @@ def joinAll {α : Type} [ToString α] (sep : String) (xs : List α) : String :=
 
 ---
 
-Previous: [Error handling](errors.md) · [Contents](../README.md#rules) · Next: [Naming](naming.md)
+Previous: [Logging](logging.md) · [Contents](../README.md#rules) · Next: [Naming](naming.md)
 
 
 [agda-variable]: https://github.com/agda/agda-stdlib/blob/2ffa8b7d4e8e818717ad643d184f055a4d1b0447/doc/style-guide.md
@@ -127,5 +129,6 @@ Previous: [Error handling](errors.md) · [Contents](../README.md#rules) · Next:
 [cn-std]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/doc/std/naming.md#the-std-namespace
 [fpil-protected]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/Monads/IO.lean#L153
 [fro-all]: ../research/author-survey.md
+[issue-1]: https://github.com/saviorand/lean-style-guide/issues/1
 [ml-deprecation]: https://leanprover-community.github.io/contribute/style.html#deprecation
 [ref-modules]: https://github.com/leanprover/reference-manual/blob/400f1682df64bc00e485215bfa4398d24c0f220c/Manual/SourceFiles.lean#L843-L848

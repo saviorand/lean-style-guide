@@ -2,29 +2,58 @@
 
 Part of [A Lean Style Guide for Software](../README.md), a community draft. Every example compiles with Lean 4.35.0.
 
-<a name="proofs-cost"></a>
-## The cost of proofs
+<a name="proofs-first"></a>
+## Proofs first
 
-Proofs make many tests unnecessary, but they take time to write and maintain. Put cheap guarantees in types, test the rest, and prove the properties that matter most and change least. Test a function before you prove anything about it, so you don't spend a proof on a bug.
+Give each claim about your code the strongest form it admits. Put it in a type if that's cheap. Otherwise prove it as a theorem, and fall back to a property test, then to an example with an expected result, only when the stronger form doesn't work out. FPIL warns that proofs can be expensive, but with AI assistance many now cost little more than the tests they replace, so make them the default.
 
-*Sources: FPIL on [cost][fpil-proofs] and [testing first][fpil-testfirst].*
+A theorem is required when the claim is about a pure, total function and either:
 
+- its cases are finite, as with encodings and mappings between representations, or
+- a counterexample would corrupt output rather than merely look wrong, as with an invariant that a file format depends on.
+
+*Sources: [Paul Butcher, issue #1][issue-1], [FPIL][fpil-proofs].*
 <a name="proofs-spec"></a>
 ## Executable specifications
 
-When you write a fast version of a function, keep the simple version as its specification. Test that the two agree, and prove it if it matters.
+When you write a fast version of a function, keep the simple version as its specification, and prove that the two agree.
 
 ```lean
--- good
 def sumTo (n : Nat) : Nat := (List.range (n + 1)).foldl (· + ·) 0
 
 def sumToFast (n : Nat) : Nat := n * (n + 1) / 2
 
+-- bad
 #guard (List.range 50).all fun n => sumTo n == sumToFast n
 ```
 
-*Source: [FPIL][fpil-proofs].*
+```lean
+def sumTo (n : Nat) : Nat := (List.range (n + 1)).foldl (· + ·) 0
 
+def sumToFast (n : Nat) : Nat := n * (n + 1) / 2
+
+-- good
+theorem sumToFast_eq_sumTo (n : Nat) : sumToFast n = sumTo n := by
+  induction n with
+  | zero => rfl
+  | succ k ih => simp only [sumTo, sumToFast, List.range_succ, List.foldl_append] at *; grind
+```
+
+*Sources: [FPIL][fpil-proofs], [Paul Butcher, issue #1][issue-1].*
+
+<a name="proofs-timebox"></a>
+## When a proof doesn't work out
+
+Give a proof a fixed amount of time. If it doesn't work out, write a property test instead, and say in a comment what blocked the proof, so the next person knows where to start.
+
+*Source: [Paul Butcher, issue #1][issue-1].*
+
+<a name="proofs-recheck"></a>
+## Revisiting property tests
+
+When a module that has property tests changes, check whether each property can now be proved. A change to a definition or a new lemma in a dependency can make a proof that failed before go through.
+
+*Source: [Paul Butcher, issue #1][issue-1].*
 <a name="proofs-location"></a>
 ## Location of proofs
 
@@ -87,5 +116,5 @@ Previous: [Recursion and termination](recursion.md) · [Contents](../README.md#r
 [fpil-proof-style]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/ProgramsProofs/Inequalities.lean#L459-L462
 [fpil-proofs]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/ProgramsProofs.lean#L37-L41
 [fpil-sorry]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/ProgramsProofs/Summary.lean#L99
-[fpil-testfirst]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/ProgramsProofs/TailRecursionProofs.lean#L20
+[issue-1]: https://github.com/saviorand/lean-style-guide/issues/1
 [survey-proofs]: ../research/stdlib-survey.md#13-proofs-about-programs
