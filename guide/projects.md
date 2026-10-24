@@ -42,15 +42,14 @@ rev = "v0.8.0"
 <a name="project-options"></a>
 ## Lean options
 
-Set project-wide options in the Lake configuration, so they apply to every file. Turn off automatic implicit arguments everywhere, and turn on the missing-docs linter in libraries.
+Set project-wide options in the Lake configuration, so they apply to every file. Turn off automatic implicit arguments everywhere.
 
 ```toml
 [leanOptions]
 autoImplicit = false
-linter.missingDocs = true
 ```
 
-*Sources: [Mathlib configuration][ml-autoimplicit], [Batteries configuration][batteries-docs].*
+*Source: [Mathlib configuration][ml-autoimplicit].*
 
 <a name="project-warnings"></a>
 ## Warnings
@@ -77,7 +76,6 @@ Don't reformat code you aren't otherwise changing, because it buries real change
 
 Previous: [Performance and low-level code](performance.md) · [Contents](../README.md#rules) · Next: [Source code layout](layout.md)
 
-[batteries-docs]: https://github.com/leanprover-community/batteries/blob/4453b52d2468f4c346a8711d728c0742e7483c9b/lakefile.toml#L7
 [checked]: ../research/decisions.md#facts-checked-while-drafting
 [fpil-main]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/HelloWorld/StartingAProject.lean#L40
 [google-warnings]: https://google.github.io/styleguide/haskellguide.html#warnings

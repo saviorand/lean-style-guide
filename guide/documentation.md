@@ -2,32 +2,37 @@
 
 Part of [A Lean Style Guide for Software](../README.md), a community draft. Every example compiles with Lean 4.35.0.
 
-<a name="docs-public"></a>
-## Docstrings on public declarations
+<a name="docs-when"></a>
+## When to write a docstring
 
-Give every public declaration in a library a docstring, written `/-- … -/` just before it. Turn on `linter.missingDocs` to find the ones you missed. In an application, document whatever isn't obvious from the name and type.
+Write a docstring when the name and type leave something unsaid, such as a unit, what happens at an edge case, or what `none` means when it can mean more than one thing. Don't write one that only restates the name and type. It tells the reader nothing new and goes stale when the code changes. This is looser than Lean's standard library and Batteries, which document every public declaration and turn on `linter.missingDocs`.
 
 ```lean
-set_option linter.missingDocs true
+-- bad
+/-- The client configuration. -/
+structure ClientConfig where
+  /-- The base URL. -/
+  baseUrl : String
+  /-- The number of retries. -/
+  retries : Nat := 3
+```
 
+```lean
 -- good
-/-- Settings for the HTTP client. -/
 structure ClientConfig where
   /-- The base URL that relative paths are resolved against. -/
   baseUrl : String
-  /-- How long to wait for a response, in milliseconds. -/
-  timeoutMs : Nat := 5000
+  /-- Extra attempts after the first one fails, so `0` means a single attempt. -/
+  retries : Nat := 3
 ```
 
-*Sources: [Lean core style][cs-docs], [Batteries configuration][batteries-docs], [Google Haskell guide][google-haddock].*
-
+*Sources: [Paul Butcher, issue #1][issue-1], [lean4 `AGENTS.md`][agents-comments]; for the stricter practice, [Lean core style][cs-docs] and [Batteries configuration][batteries-docs].*
 <a name="docs-module"></a>
 ## Module docstrings
 
-Begin every file with a module docstring that has a `#` title and says what the file is for, as in the [file structure](layout.md#layout-file) example.
+Begin a file with a module docstring when the file needs an explanation that its code doesn't give, such as how its parts fit together or why it exists. Give it a `#` title, as in the [file structure](layout.md#layout-file) example. Don't add one that only repeats the file name.
 
-*Source: [Mathlib documentation][ml-doc].*
-
+*Sources: [Paul Butcher, issue #1][issue-1], [Mathlib documentation][ml-doc].*
 <a name="docs-summary"></a>
 ## The first sentence
 
@@ -78,10 +83,11 @@ def nonEmptyLines (text : String) : List String := (text.splitOn "\n").filter (�
 
 Previous: [Testing](testing.md) · [Contents](../README.md#rules) · Next: [Comments](comments.md)
 
+[agents-comments]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/AGENTS.md?plain=1#L75-L83
 [batteries-docs]: https://github.com/leanprover-community/batteries/blob/4453b52d2468f4c346a8711d728c0742e7483c9b/lakefile.toml#L7
 [cs-docs]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/doc/std/style.md#documentation-comments
 [ds-constants]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/doc/style.md#constants
 [fpil-examples]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/TypeClasses/Conveniences.lean#L111
-[google-haddock]: https://google.github.io/styleguide/haskellguide.html#haddock
+[issue-1]: https://github.com/saviorand/lean-style-guide/issues/1
 [ml-doc]: https://leanprover-community.github.io/contribute/doc.html
 [rust-example]: https://rust-lang.github.io/api-guidelines/documentation.html#c-example

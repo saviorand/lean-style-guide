@@ -50,7 +50,7 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 - Give a library an inductive error type with a `ToString` instance ([`errors-types`](guide/errors.md#errors-types)).
 - In `IO` code, throw errors instead of returning default values ([`errors-io`](guide/errors.md#errors-io)).
 - Use `panic!` and `!` functions only when essential: for bugs, where you can't pass a proof instead, and never to reject bad input ([`errors-panics`](guide/errors.md#errors-panics)).
-- Say in the docstring how a function fails ([`errors-document`](guide/errors.md#errors-document)).
+- Say in the docstring how a function fails when its type doesn't already say so ([`errors-document`](guide/errors.md#errors-document)).
 
 ### [API design and visibility](guide/api.md)
 
@@ -131,8 +131,8 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 
 ### [Documentation](guide/documentation.md)
 
-- Give every public declaration in a library a docstring ([`docs-public`](guide/documentation.md#docs-public)).
-- Begin every file with a module docstring that has a `#` title ([`docs-module`](guide/documentation.md#docs-module)).
+- Write a docstring when the name and type leave something unsaid, and not one that restates them ([`docs-when`](guide/documentation.md#docs-when)).
+- Begin a file with a module docstring, with a `#` title, when the file needs more explanation than its code gives ([`docs-module`](guide/documentation.md#docs-module)).
 - Start a function's docstring with a verb such as "Returns", and a type's with a noun phrase ([`docs-summary`](guide/documentation.md#docs-summary)).
 - Show short examples in docstrings, and check them with tests ([`docs-examples`](guide/documentation.md#docs-examples)).
 - Put a short docstring on one line, and the delimiters of a longer one on lines of their own ([`docs-layout`](guide/documentation.md#docs-layout)).
@@ -162,7 +162,7 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 
 - Start from the layout `lake new` creates, with a small `Main.lean` ([`project-layout`](guide/projects.md#project-layout)).
 - Commit `lean-toolchain` and `lake-manifest.json`, and require dependencies at release tags ([`project-dependencies`](guide/projects.md#project-dependencies)).
-- Set `autoImplicit = false`, and `linter.missingDocs = true` in libraries, in the Lake configuration ([`project-options`](guide/projects.md#project-options)).
+- Set `autoImplicit = false` in the Lake configuration ([`project-options`](guide/projects.md#project-options)).
 - Check for warnings in CI with `lake build --wfail`, and don't set `warningAsError` in a library ([`project-warnings`](guide/projects.md#project-warnings)).
 - Keep Lean's built-in linters on ([`project-linters`](guide/projects.md#project-linters)).
 - Don't mix reformatting with other changes ([`project-formatting`](guide/projects.md#project-formatting)).

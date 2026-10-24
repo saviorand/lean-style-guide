@@ -115,21 +115,18 @@ Set the environment variable `LEAN_ABORT_ON_PANIC` to make the program abort on 
 <a name="errors-document"></a>
 ## Documenting failure
 
-Say in the docstring how a function fails: what `none` means, which errors it throws and when it panics.
+Say in the docstring how a function fails when its type doesn't already say so: which errors it throws, when it panics, or what `none` means if it can mean more than one thing. For `price? : List (String × Nat) → String → Option Nat`, a docstring saying that it returns `none` when the item is missing only repeats the type.
 
 ```lean
 -- good
-/-- Returns the price of `item`, or `none` if the list doesn't contain it. -/
-def price? (prices : List (String × Nat)) (item : String) : Option Nat :=
-  prices.lookup item
-
-/-- Returns the price of `item`. Panics if the list doesn't contain it. -/
-def price! (prices : List (String × Nat)) (item : String) : Nat :=
-  (prices.lookup item).get!
+/--
+Reads the configuration file at `path`. Throws if the file can't be read or isn't valid UTF-8.
+-/
+def readConfig (path : System.FilePath) : IO String :=
+  IO.FS.readFile path
 ```
 
-*Source: standard library docstrings, such as [`Array.swapAt!`][std-doc-panics] and [`IO.FS.createDir`][std-doc-throws].*
-
+*Sources: standard library docstrings, such as [`Array.swapAt!`][std-doc-panics] and [`IO.FS.createDir`][std-doc-throws]; [Paul Butcher, issue #1][issue-1].*
 ---
 
 Previous: [Effects and `do` notation](effects.md) · [Contents](../README.md#rules) · Next: [API design and visibility](api.md)
