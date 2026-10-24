@@ -49,6 +49,7 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 - Return `Option` for one obvious failure and `Except` when the caller needs to know which failure happened ([`errors-option-except`](guide/errors.md#errors-option-except)).
 - Give a library an inductive error type with a `ToString` instance ([`errors-types`](guide/errors.md#errors-types)).
 - In `IO` code, throw errors instead of returning default values ([`errors-io`](guide/errors.md#errors-io)).
+- Don't replace a missing value with a default when its absence can mean that the program is misconfigured ([`errors-defaults`](guide/errors.md#errors-defaults)).
 - Use `panic!` and `!` functions only when essential: for bugs, where you can't pass a proof instead, and never to reject bad input ([`errors-panics`](guide/errors.md#errors-panics)).
 - Say in the docstring how a function fails when its type doesn't already say so ([`errors-document`](guide/errors.md#errors-document)).
 
@@ -58,7 +59,7 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 - Use the module system in libraries, with a plain `public section` in program files ([`api-modules`](guide/api.md#api-modules)).
 - Mark helpers `private`, or put them in an `Internal` namespace ([`api-private`](guide/api.md#api-private)).
 - Mark a declaration `protected` if its short name would clash after `open` ([`api-protected`](guide/api.md#api-protected)).
-- Deprecate a public declaration with `@[deprecated]` before you rename or remove it ([`api-deprecation`](guide/api.md#api-deprecation)).
+- Deprecate a public declaration before you rename, remove or change it, and note every such change in the changelog ([`api-deprecation`](guide/api.md#api-deprecation)).
 - Avoid `variable` in program code ([`api-variable`](guide/api.md#api-variable)).
 
 ### [Naming](guide/naming.md)
@@ -143,7 +144,7 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 
 - Explain why in comments, and don't restate what the code does ([`comments-why`](guide/comments.md#comments-why)).
 - Write down every invariant that your types don't enforce ([`comments-invariants`](guide/comments.md#comments-invariants)).
-- Leave history and dead code to version control ([`comments-history`](guide/comments.md#comments-history)).
+- Leave history and dead code to version control, and unfinished work to the issue tracker ([`comments-history`](guide/comments.md#comments-history)).
 
 ### [Macros and notation](guide/macros.md)
 

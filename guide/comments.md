@@ -43,9 +43,9 @@ def Buffer.remaining (b : Buffer) : Nat := b.data.size - b.start
 <a name="comments-history"></a>
 ## History and dead code
 
-Don't keep the history of a change or old versions of code in comments. Version control keeps both. When a comment goes stale, rewrite it rather than adding a new one beside it. Mark unfinished work with `-- TODO:` and a short description.
+Don't keep the history of a change or old versions of code in comments. Version control keeps both. When a comment goes stale, rewrite it rather than adding a new one beside it. Track unfinished work in the issue tracker rather than in `-- TODO:` comments. A TODO describes a plan, so it stops being true when the plan changes or is carried out.
 
-*Source: [lean4 `AGENTS.md`][agents-comments].*
+*Sources: [lean4 `AGENTS.md`][agents-comments], [Paul Butcher, issue #1][issue-1].*
 
 ---
 
@@ -53,3 +53,4 @@ Previous: [Documentation](documentation.md) · [Contents](../README.md#rules) ·
 
 [agents-comments]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/AGENTS.md?plain=1#L75-L83
 [google-comments]: https://google.github.io/styleguide/haskellguide.html#comments
+[issue-1]: https://github.com/saviorand/lean-style-guide/issues/1

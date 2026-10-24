@@ -87,6 +87,28 @@ def loadAge (path : System.FilePath) : IO Nat := do
 
 *Source: [FRO practice][fro-d].*
 
+
+<a name="errors-defaults"></a>
+## Defaults for missing values
+
+Before you replace a missing value with a default, as with `getD`, check what the missing value can mean. If it can mean that the program is misconfigured, as with a misspelled environment variable or a configuration file in the wrong place, don't default to a value that means "nothing was asked for". The misconfigured program would then give wrong answers without saying why. Report the missing value instead, and if "nothing" is a valid setting, let users ask for it explicitly.
+
+```lean
+-- bad
+def allowedOrigins : IO (List String) := do
+  let raw := (← IO.getEnv "ALLOWED_ORIGINS").getD ""
+  return (raw.splitOn ",").filter (· != "")
+```
+
+```lean
+-- good
+def allowedOrigins : IO (List String) := do
+  let some raw ← IO.getEnv "ALLOWED_ORIGINS"
+    | throw <| IO.userError "ALLOWED_ORIGINS is not set; set it empty to allow no origins"
+  return (raw.splitOn ",").filter (· != "")
+```
+
+*Source: [Paul Butcher, issue #1][issue-1].*
 <a name="errors-panics"></a>
 ## Panics
 
