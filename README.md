@@ -123,10 +123,12 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 ### [Testing](guide/testing.md)
 
 - Test what types and proofs don't cover ([`tests-coverage`](guide/testing.md#tests-coverage)).
-- Put tests in a `<Pkg>Test` library and make it the package's `testDriver` ([`tests-library`](guide/testing.md#tests-library)).
+- Don't write tests that only restate literals from the source ([`tests-literals`](guide/testing.md#tests-literals)).
+- Put tests in a `<Pkg>Test` library run by `lake test`, or in a `test/` subproject when a library's tests need extra dependencies ([`tests-library`](guide/testing.md#tests-library)).
 - Check results with `#guard_msgs` and `#guard` ([`tests-guard-msgs`](guide/testing.md#tests-guard-msgs)).
+- Compare whole outputs with saved copies only where their exact form is the contract, and review every regenerated copy ([`tests-golden`](guide/testing.md#tests-golden)).
 - Use an executable test driver for tests that run `IO` ([`tests-runtime`](guide/testing.md#tests-runtime)).
-- Test clear properties on random inputs with Plausible ([`tests-property`](guide/testing.md#tests-property)).
+- Test properties of your own code that aren't proved yet on random inputs, with `Plausible.Testable.check` rather than the `plausible` tactic ([`tests-property`](guide/testing.md#tests-property)).
 - In test files that are modules, import the code under test with `meta import` ([`tests-meta-import`](guide/testing.md#tests-meta-import)).
 
 ### [Documentation](guide/documentation.md)

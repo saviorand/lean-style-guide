@@ -5,7 +5,7 @@ Part of [A Lean Style Guide for Software](../README.md), a community draft. Ever
 <a name="project-layout"></a>
 ## Package layout
 
-Start from the layout that `lake new` creates. The library lives in `MyApp/`, with a root module `MyApp.lean` that imports its parts. `Main.lean` stays a small wrapper that parses the command line and calls the library.
+Start from the layout that `lake new` creates. The library lives in `MyApp/`, with a root module `MyApp.lean` that imports its parts. `Main.lean` stays a small wrapper that parses the command line and calls the library. A library whose tests need extra dependencies keeps them in a `test/` subproject instead (see [A test library](testing.md#tests-library)).
 
 ```text
 myapp/
