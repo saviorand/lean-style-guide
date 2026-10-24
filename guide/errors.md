@@ -90,7 +90,7 @@ def loadAge (path : System.FilePath) : IO Nat := do
 <a name="errors-panics"></a>
 ## Panics
 
-Use `panic!`, `unreachable!` and functions ending in `!` only for conditions that would be bugs in your own code, never to reject bad input. A panic doesn't stop a Lean program. It prints a message and the program carries on with a default value:
+Use `panic!`, `unreachable!` and functions ending in `!` only when it's essential: for a condition that would be a bug in your own code, where you can't pass a proof that it holds instead. Never use them to reject bad input. A panic doesn't stop a Lean program. It prints a message and the program carries on with a default value:
 
 ```lean
 def risky (xs : Array Nat) : Nat := xs[5]!
@@ -110,7 +110,7 @@ after
 
 Set the environment variable `LEAN_ABORT_ON_PANIC` to make the program abort on the first panic instead.
 
-*Sources: [Lean naming conventions][cn-data], [Google Haskell guide][google-partial], [Lean runtime][lean-panic], [checked with Lean 4.35][checked].*
+*Sources: [Lean naming conventions][cn-data], [Google Haskell guide][google-partial], [Lean runtime][lean-panic], [checked with Lean 4.35][checked], [Paul Butcher, issue #1][issue-1].*
 
 <a name="errors-document"></a>
 ## Documenting failure
@@ -139,6 +139,7 @@ Previous: [Effects and `do` notation](effects.md) · [Contents](../README.md#rul
 [fpil-except]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/Monads.lean#L206-L218
 [fro-d]: ../research/author-survey.md#author-dependent-no-fro-convention
 [google-partial]: https://google.github.io/styleguide/haskellguide.html#partial-functions
+[issue-1]: https://github.com/saviorand/lean-style-guide/issues/1
 [lake-clierror]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/lake/Lake/CLI/Error.lean#L16
 [lean-panic]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/runtime/object.cpp#L80
 [std-doc-panics]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/Init/Data/Array/Basic.lean#L447-L455

@@ -11,7 +11,7 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 ## Guiding principles
 
 - Names should be guessable ([Lean naming conventions][cn-intro]).
-- Put cheap guarantees in types, test the rest, and prove what matters most ([FPIL][fpil-proofs], [Boring Haskell Manifesto][boring-haskell]).
+- Give each claim the strongest guarantee it admits: a type, then a theorem, then a property test, then an example ([Paul Butcher, issue #1][issue-1]).
 
 ## Rules
 
@@ -49,7 +49,7 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 - Return `Option` for one obvious failure and `Except` when the caller needs to know which failure happened ([`errors-option-except`](guide/errors.md#errors-option-except)).
 - Give a library an inductive error type with a `ToString` instance ([`errors-types`](guide/errors.md#errors-types)).
 - In `IO` code, throw errors instead of returning default values ([`errors-io`](guide/errors.md#errors-io)).
-- Use `panic!` and `!` functions only for bugs, never to reject bad input ([`errors-panics`](guide/errors.md#errors-panics)).
+- Use `panic!` and `!` functions only when essential: for bugs, where you can't pass a proof instead, and never to reject bad input ([`errors-panics`](guide/errors.md#errors-panics)).
 - Say in the docstring how a function fails ([`errors-document`](guide/errors.md#errors-document)).
 
 ### [API design and visibility](guide/api.md)
@@ -105,14 +105,16 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 ### [Recursion and termination](guide/recursion.md)
 
 - Prefer structural recursion, and give a measure with `termination_by` when the recursion isn't structural ([`recursion-structural`](guide/recursion.md#recursion-structural)).
-- Mark a function `partial` when it might not terminate or a termination proof isn't worth it. Do so only if you won't prove things about it ([`recursion-partial`](guide/recursion.md#recursion-partial)).
+- Mark a function `partial` only when it might not terminate, or nobody knows whether it does ([`recursion-partial`](guide/recursion.md#recursion-partial)).
 - Use `for`, `while` and `repeat` instead of recursive helpers that only loop ([`recursion-loops`](guide/recursion.md#recursion-loops)).
 - Use loops or accumulators for recursion over large inputs ([`recursion-deep`](guide/recursion.md#recursion-deep)).
 
 ### [Proofs about programs](guide/proofs.md)
 
-- Put cheap guarantees in types, test the rest, and prove what matters most ([`proofs-cost`](guide/proofs.md#proofs-cost)).
-- Keep the simple version of an optimized function as its specification ([`proofs-spec`](guide/proofs.md#proofs-spec)).
+- Prove claims as theorems by default, and fall back to property tests and examples only when a proof doesn't work out ([`proofs-first`](guide/proofs.md#proofs-first)).
+- Keep the simple version of an optimized function as its specification, and prove that the two agree ([`proofs-spec`](guide/proofs.md#proofs-spec)).
+- Time-box a proof, and if it fails, write a property test with a comment that records the obstacle ([`proofs-timebox`](guide/proofs.md#proofs-timebox)).
+- When a module with property tests changes, check whether each property can now be proved ([`proofs-recheck`](guide/proofs.md#proofs-recheck)).
 - Keep short lemmas next to their definitions, and move longer proofs to their own module ([`proofs-location`](guide/proofs.md#proofs-location)).
 - Prefer `grind`, `omega` and `simp` to long manual proofs, and squeeze `simp` calls that aren't the last step ([`proofs-automation`](guide/proofs.md#proofs-automation)).
 - Name a theorem after what it states, in `snake_case`, starting from the conclusion ([`proofs-names`](guide/proofs.md#proofs-names)).
@@ -191,7 +193,6 @@ python3 tools/check_examples.py
 
 The text of this guide is licensed under [CC BY 4.0](LICENSE). The code examples, [tools/](tools/) and [research/scripts/](research/scripts/) are licensed under [Apache-2.0](LICENSE-CODE). Material quoted in [research/](research/) stays under its original licence, listed for each source in [research/index.md](research/index.md).
 
-[boring-haskell]: https://www.snoyman.com/blog/2019/11/boring-haskell-manifesto/#power-to-weight-ratio
 [cn-intro]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/doc/std/naming.md#standard-library-naming-conventions
-[fpil-proofs]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/ProgramsProofs.lean#L37-L41
 [fro-roadmap]: https://lean-lang.org/fro/roadmap/y4-1/
+[issue-1]: https://github.com/saviorand/lean-style-guide/issues/1
