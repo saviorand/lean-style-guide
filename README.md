@@ -10,11 +10,8 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 
 ## Guiding principles
 
-- Code is read far more often than it is written, so the rules favour the reader ([PEP 8][pep8-consistency], [OCaml guidelines][ocaml-readable]).
 - Names should be guessable ([Lean naming conventions][cn-intro]).
-- Where an established practice competes with a subjectively better one, follow the established practice ([Lean contributing guide][lean-contributing], [Simple Haskell][simple-haskell]).
 - Put cheap guarantees in types, test the rest, and prove what matters most ([FPIL][fpil-proofs], [Boring Haskell Manifesto][boring-haskell]).
-- Consistency within a project matters more than this guide, and consistency within a file matters most. Don't rewrite old code or break backward compatibility just to follow a rule ([PEP 8][pep8-consistency], [Kowainik][kowainik-existing]).
 
 ## Rules
 
@@ -23,7 +20,6 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 ### [Data modelling](guide/data.md)
 
 - Use a `structure` for a value with several parts and an `inductive` for alternatives ([`data-structure-inductive`](guide/data.md#data-structure-inductive)).
-- Model state so that impossible combinations can't be written down ([`data-illegal-states`](guide/data.md#data-illegal-states)).
 - Define structures with named fields instead of passing tuples around ([`data-own-types`](guide/data.md#data-own-types)).
 - Wrap a primitive in a single-field structure when its values must not be mixed with others, such as IDs ([`data-wrappers`](guide/data.md#data-wrappers)).
 - Check a value once where it enters the program, and pass a type that carries the check ([`data-boundary`](guide/data.md#data-boundary)).
@@ -54,7 +50,6 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 - Give a library an inductive error type with a `ToString` instance ([`errors-types`](guide/errors.md#errors-types)).
 - In `IO` code, throw errors instead of returning default values ([`errors-io`](guide/errors.md#errors-io)).
 - Use `panic!` and `!` functions only for bugs, never to reject bad input ([`errors-panics`](guide/errors.md#errors-panics)).
-- Don't catch every exception and carry on as if nothing happened ([`errors-catch-all`](guide/errors.md#errors-catch-all)).
 - Say in the docstring how a function fails ([`errors-document`](guide/errors.md#errors-document)).
 
 ### [API design and visibility](guide/api.md)
@@ -85,11 +80,9 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 - Give every top-level definition explicit argument types and an explicit result type ([`functions-signatures`](guide/functions.md#functions-signatures)).
 - Make an argument implicit, with braces, when later arguments determine it ([`functions-implicit`](guide/functions.md#functions-implicit)).
 - Turn off `autoImplicit`, so a misspelled type name is an error ([`functions-auto-implicit`](guide/functions.md#functions-auto-implicit)).
-- Keep each function short enough to read at once ([`functions-size`](guide/functions.md#functions-size)).
 - Put single-use helpers in a `where` clause, and name a recursive helper `go` ([`functions-helpers`](guide/functions.md#functions-helpers)).
-- Group more than about four parameters in a structure with default values ([`functions-options`](guide/functions.md#functions-options)).
+- Give optional parameters default values, and put options that several functions share in a structure ([`functions-options`](guide/functions.md#functions-options)).
 - Pass `Bool` arguments by name, as in `(quiet := true)` ([`functions-bool-args`](guide/functions.md#functions-bool-args)).
-- List every constructor when you match on your own types, rather than ending with `_` ([`functions-exhaustive`](guide/functions.md#functions-exhaustive)).
 - Use `|>`, `|>.` and `<|` to avoid nested parentheses, and don't use `$` ([`functions-pipelines`](guide/functions.md#functions-pipelines)).
 - Write lambdas as `fun x => e`, never with `λ` or `↦` ([`functions-lambdas`](guide/functions.md#functions-lambdas)).
 
@@ -150,7 +143,6 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 
 ### [Macros and notation](guide/macros.md)
 
-- Avoid new symbolic operators in program APIs ([`macros-symbols`](guide/macros.md#macros-symbols)).
 - Get standard notation by implementing classes such as `Add` and `GetElem` ([`macros-classes`](guide/macros.md#macros-classes)).
 - Use macros for syntax sugar, and elaborators when the translation needs types or decisions ([`macros-macro-or-elab`](guide/macros.md#macros-macro-or-elab)).
 - Make notation `scoped` unless every user of your library needs it ([`macros-scoped`](guide/macros.md#macros-scoped)).
@@ -187,12 +179,6 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 - In a multi-line structure instance, put `{` at the end of the line before it and `}` on its own line ([`layout-structure-instances`](guide/layout.md#layout-structure-instances)).
 - Put `do` on the same line as the `:=`, `=>` or `←` before it ([`layout-do`](guide/layout.md#layout-do)).
 
-## Existential
-
-- Let the types do the work where that's cheap.
-- Be consistent ([Google Haskell guide][google-parting]).
-- Use common sense ([Google Haskell guide][google-parting]).
-
 ## Contributing
 
 Open an issue or a pull request. Every Lean example has to compile:
@@ -209,9 +195,3 @@ The text of this guide is licensed under [CC BY 4.0](LICENSE). The code examples
 [cn-intro]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/doc/std/naming.md#standard-library-naming-conventions
 [fpil-proofs]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/ProgramsProofs.lean#L37-L41
 [fro-roadmap]: https://lean-lang.org/fro/roadmap/y4-1/
-[google-parting]: https://google.github.io/styleguide/haskellguide.html#parting-words
-[kowainik-existing]: https://kowainik.github.io/posts/2019-02-06-style-guide#rule-of-thumb-when-working-with-existing-source-code
-[lean-contributing]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/CONTRIBUTING.md?plain=1#L44
-[ocaml-readable]: https://ocaml.org/docs/guidelines#be-simple-and-readable
-[pep8-consistency]: https://peps.python.org/pep-0008/#a-foolish-consistency-is-the-hobgoblin-of-little-minds
-[simple-haskell]: https://www.simplehaskell.org/

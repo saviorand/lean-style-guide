@@ -36,7 +36,7 @@ def parseAge (s : String) : Except AgeError Nat := do
 <a name="errors-types"></a>
 ## Error types
 
-Give a library an inductive error type with one constructor per kind of failure, as in `AgeError` above, and a `ToString` instance for messages. Callers can match on an inductive type, but all they can do with a `String` is print it. Plain `String` errors are fine at the outer layer of an application.
+Give a library an inductive error type with one constructor per kind of failure, as in `AgeError` above, and a `ToString` instance for messages. `IO.ofExcept` needs that instance to turn an `Except` into an `IO` error. Callers can match on an inductive type, but all they can do with a `String` is print it. Plain `String` errors are fine at the outer layer of an application.
 
 ```lean
 inductive AgeError where
@@ -112,25 +112,6 @@ Set the environment variable `LEAN_ABORT_ON_PANIC` to make the program abort on 
 
 *Sources: [Lean naming conventions][cn-data], [Google Haskell guide][google-partial], [Lean runtime][lean-panic], [checked with Lean 4.35][checked].*
 
-<a name="errors-catch-all"></a>
-## Catching everything
-
-Don't catch every exception and carry on as if nothing happened. Handle the failures you expect, and let the others reach code that can report them. In the bad example, a permissions error quietly produces an empty configuration.
-
-```lean
--- bad
-def readConfig (path : System.FilePath) : IO String := do
-  try IO.FS.readFile path catch _ => return ""
-```
-
-```lean
--- good
-def readConfig (path : System.FilePath) : IO String := do
-  if (← path.pathExists) then IO.FS.readFile path else return ""
-```
-
-*Source: [OCaml guidelines][ocaml-exc].*
-
 <a name="errors-document"></a>
 ## Documenting failure
 
@@ -160,7 +141,6 @@ Previous: [Effects and `do` notation](effects.md) · [Contents](../README.md#rul
 [google-partial]: https://google.github.io/styleguide/haskellguide.html#partial-functions
 [lake-clierror]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/lake/Lake/CLI/Error.lean#L16
 [lean-panic]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/runtime/object.cpp#L80
-[ocaml-exc]: https://ocaml.org/docs/guidelines#exceptions
 [std-doc-panics]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/Init/Data/Array/Basic.lean#L447-L455
 [std-doc-throws]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/Init/System/IO.lean#L896-L900
 [std-ioerror]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/Init/System/IOError.lean#L24

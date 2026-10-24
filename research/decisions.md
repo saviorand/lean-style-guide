@@ -19,7 +19,7 @@ The first draft (2026-10-20) had to answer the questions in [open-questions.md](
 | Q10 | `abbrev` for shorthand such as monad stacks, `structure` for domain types, no `def` type synonyms. | `#data-abbrev`, `#data-wrappers` |
 | Q11 | Derive rather than hand-write; `Repr` on every data type; `Hashable` together with `BEq`. | `#data-deriving` |
 | Q12 | `Option` for one obvious failure, `Except` when callers need the reason; `IO` code throws; `IO.ofExcept` where pure code meets `IO`. | `#errors-option-except`, `#errors-io` |
-| Q13 | Inductive error types with `ToString`; panics only for bugs; document failure in docstrings; no catch-all handlers. | `#errors-types`, `#errors-panics`, `#errors-document`, `#errors-catch-all` |
+| Q13 | Inductive error types with `ToString`; panics only for bugs; document failure in docstrings. No rule on catch-all handlers (dropped on 2026-10-24). | `#errors-types`, `#errors-panics`, `#errors-document` |
 | Q14 | `ReaderT` for configuration; `abbrev` for the application monad; `modify`; `try … finally`; `IO`, `Task` or `Async` as the Reference says. | `#effects-*` |
 | Q15 | Structural recursion first, then `termination_by`; `partial` is fine with a comment; loops in `do` instead of recursive loop helpers. | `#recursion-*` |
 | Q16 | FPIL's cost argument; test before proving; keep executable specifications. | `#proofs-cost`, `#proofs-spec` |
@@ -44,7 +44,7 @@ The first draft (2026-10-20) had to answer the questions in [open-questions.md](
 
 ## Facts checked while drafting
 
-All 127 checked examples compile with Lean 4.35.0 (`python3 tools/check_examples.py`). Behaviour that the text describes was checked separately with 4.35.0:
+All 121 checked examples compile with Lean 4.35.0 (`python3 tools/check_examples.py`). Behaviour that the text describes was checked separately with 4.35.0:
 - A panic prints its message and the program continues with a default value; `LEAN_ABORT_ON_PANIC` makes it abort (`src/runtime/object.cpp`).
 - `autoImplicit` is on by default.
 - `where` helpers can use the outer function's parameters.
@@ -54,6 +54,7 @@ All 127 checked examples compile with Lean 4.35.0 (`python3 tools/check_examples
 - `scoped` notation needs a namespace, and `infixl` notation prints back as written.
 - `def Port := Nat` blocks `OfNat Port`.
 - `String.trim` no longer exists in 4.35; examples use `String.trimAscii`.
+- A call can set a later parameter by name and leave out earlier parameters that have defaults, as in `connect "localhost" (useTls := false)`.
 - A `Bool` parameter can be passed by name, as in `formatName "Ada" "Lovelace" (lastFirst := true)`, with or without a default.
 - A macro whose expansion has a type error is accepted where it is defined and fails where it is used; the equivalent `def` fails where it is defined.
 
@@ -66,7 +67,7 @@ Measured on 2026-10-21 by grepping lean4 `3a685e6` (approximate counts):
 
 ## Rules without a published source
 
-Every rule has a source line since 2026-10-21. `collections-maps` cites only the `Std.HashMap` and `Std.TreeMap` docstrings, which describe the two maps but don't recommend one; no Lean document says when to use which. Three rules still rest on other languages alone, because no Lean source says the same: `data-illegal-states` (Minsky), `functions-exhaustive` and `errors-catch-all` (OCaml guidelines). Each holds in Lean as it does in OCaml.
+Every rule has a source line since 2026-10-21. `collections-maps` cites only the `Std.HashMap` and `Std.TreeMap` docstrings, which describe the two maps but don't recommend one; no Lean document says when to use which.
 
 ## Citation changes on 2026-10-20
 
@@ -90,3 +91,16 @@ The guide no longer cites the Clojure guide. Rules that came from other language
 - Rewrote `functions-bool-args`. It said to avoid `Bool` parameters, following the Rust API guidelines and Kowainik, but Std and Lake use them throughout and Lake passes them by name. It now asks for `Bool` arguments by name.
 - Replaced other-language citations with Lean ones: `errors-types` (`IO.Error`, Lake's `CliError`), `errors-document` (standard library docstrings), `api-surface` (the Reference's note on rebuilds), `comments-invariants` (lean4 `AGENTS.md`), `macros-symbols` (core style on notation, and Lake defining no operators) and `project-formatting` (lean4 `CONTRIBUTING.md`).
 - Added sources to `collections-maps` (the `Std.HashMap` and `Std.TreeMap` docstrings) and `project-dependencies` (the Lake README on `lake-manifest.json`).
+
+## Changes on 2026-10-24
+
+Removed content that restated other style guides without saying anything about Lean. The test for each rule: if the idea came from another language's guide, keep it only if the rule adds something Lean-specific, such as Lean's semantics, a Lean feature, or evidence from Lean code.
+
+- README: dropped the guiding principles on readability and on established practice (both from the Clojure guide's introduction) and on consistency (PEP 8's note, which the Clojure guide also adapts), and the closing "Existential" section, which copied the Clojure guide's closing section. The two remaining principles come from Lean's naming conventions and FPIL.
+- Dropped `data-illegal-states` (Minsky's rule, with his connection-state example), `functions-exhaustive` (OCaml guidelines), `errors-catch-all` (the Clojure and OCaml guides), `macros-symbols` (the F# and Kowainik guides; `macros-classes` keeps the Lean part) and `functions-size` (the Clojure guide's function-length rule; the FPIL passage it later cited is about repeated code, not length).
+- `functions-options` no longer uses the Clojure guide's limit of about four parameters. It asks for default values, which Lean lets callers skip or set by name, and for a structure when several functions share the options, as `IO.Process.spawn`, `output` and `run` share `SpawnArgs`.
+- `naming-failure` no longer cites the Ruby guide. Its rule that every `!` function gets a `?` twin rests on Std, where 233 of 274 `!` functions have one.
+- `errors-types` gives a Lean reason for the `ToString` instance: `IO.ofExcept` needs it.
+
+A check for six-word sequences shared with the vendored guides found no copied sentences. The matches left are stock phrases ("at the end of the line") and short quotes from cited Lean documents.
+

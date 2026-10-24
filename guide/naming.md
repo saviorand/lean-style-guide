@@ -113,9 +113,9 @@ def price! (p : PriceList) (item : String) : Nat :=
 end PriceList
 ```
 
-If you provide a `!` variant, provide a `?` variant too, so callers who can't rule out failure have a safe choice.
+If you provide a `!` variant, provide a `?` variant too, so callers who can't rule out failure have a safe choice. Std does this for 233 of its 274 `!` functions.
 
-*Sources: [Lean naming conventions][cn-data], [FPIL][fpil-failure], [Ruby guide][ruby-bang], [standard library][survey-names].*
+*Sources: [Lean naming conventions][cn-data], [FPIL][fpil-failure], [standard library][survey-names].*
 
 <a name="naming-conversions"></a>
 ## Conversions
@@ -262,6 +262,5 @@ Previous: [API design and visibility](api.md) · [Contents](../README.md#rules) 
 [fpil-packages]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/HelloWorld/StartingAProject.lean#L104
 [fro-c]: ../research/author-survey.md#consistent-across-authors
 [ref-monadapi]: https://github.com/leanprover/reference-manual/blob/400f1682df64bc00e485215bfa4398d24c0f220c/Manual/Monads/API.lean#L25
-[ruby-bang]: https://github.com/rubocop/ruby-style-guide/blob/357eb786d6b7c2dbaaf57820bc997c03adb75c19/README.adoc?plain=1#L1112-L1138
 [survey-conv]: ../research/stdlib-survey.md#addendum-conversion-names-2026-10-20
 [survey-names]: ../research/stdlib-survey.md#1-naming

@@ -67,13 +67,6 @@ def totalPrice (items : List Item) : Nat := items.foldl (· + ·.price) 0
 
 *Sources: [Mathlib configuration][ml-autoimplicit], [checked with Lean 4.35][checked].*
 
-<a name="functions-size"></a>
-## Function size
-
-Keep each function short enough to read at once. If a function does two jobs, such as parsing input and computing a result, split it in two.
-
-*Source: [FPIL][fpil-concerns].*
-
 <a name="functions-helpers"></a>
 ## Local helpers
 
@@ -100,9 +93,9 @@ where
 *Source: [FRO practice][fro-c].*
 
 <a name="functions-options"></a>
-## Many parameters
+## Optional parameters
 
-If a function takes more than about four parameters, or several of the same type, group them in a structure with default values. Callers then name each value and leave out the ones they don't change. The standard library's `IO.Process.spawn` takes its arguments this way.
+Give optional parameters default values. Callers then leave them out and set the ones they need by name, as in `connect "localhost" (useTls := false)`. When several functions take the same options, put the options in a structure with default values instead. The standard library does this with `IO.Process.SpawnArgs`, which `IO.Process.spawn`, `IO.Process.output` and `IO.Process.run` all take.
 
 ```lean
 -- bad
@@ -114,20 +107,14 @@ def localConnection := connect "localhost" 5432 5000 3 false
 
 ```lean
 -- good
-structure ConnectOptions where
-  host : String
-  port : Nat := 5432
-  timeoutMs : Nat := 5000
-  retries : Nat := 3
-  useTls : Bool := true
+def connect (host : String) (port : Nat := 5432) (timeoutMs : Nat := 5000)
+    (retries : Nat := 3) (useTls : Bool := true) : String :=
+  s!"{host}:{port} timeout={timeoutMs} retries={retries} tls={useTls}"
 
-def connect (opts : ConnectOptions) : String :=
-  s!"{opts.host}:{opts.port} timeout={opts.timeoutMs} retries={opts.retries} tls={opts.useTls}"
-
-def localConnection := connect { host := "localhost", useTls := false }
+def localConnection := connect "localhost" (useTls := false)
 ```
 
-*Source: [standard library][std-spawnargs].*
+*Sources: [standard library][std-spawnargs], [Lake's `proc`][lake-proc].*
 
 <a name="functions-bool-args"></a>
 ## Boolean arguments
@@ -151,37 +138,6 @@ def label := formatName "Ada" "Lovelace" (lastFirst := true)
 ```
 
 *Sources: [Lake's `proc`][lake-proc], [measured in Std and Lake][checked].*
-
-<a name="functions-exhaustive"></a>
-## Exhaustive matches
-
-When you match on a type you control, list every constructor rather than ending with `_`. If someone adds a constructor later, Lean then reports every match that needs to handle it.
-
-```lean
-inductive Shape where
-  | circle (radius : Float)
-  | square (side : Float)
-  | triangle (base height : Float)
-
--- bad
-def Shape.isRound : Shape → Bool
-  | .circle _ => true
-  | _ => false
-```
-
-```lean
-inductive Shape where
-  | circle (radius : Float)
-  | square (side : Float)
-  | triangle (base height : Float)
-
--- good
-def Shape.isRound : Shape → Bool
-  | .circle _ => true
-  | .square _ | .triangle _ _ => false
-```
-
-*Source: [OCaml guidelines][ocaml-match].*
 
 <a name="functions-pipelines"></a>
 ## Pipelines
@@ -228,7 +184,6 @@ Previous: [Naming](naming.md) · [Contents](../README.md#rules) · Next: [Type c
 [checked]: ../research/decisions.md#facts-checked-while-drafting
 [cs-notation]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/doc/std/style.md#notation-and-unicode
 [fpil-annot]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/GettingToKnow/Conveniences.lean#L238-L246
-[fpil-concerns]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/Monads.lean#L111-L113
 [fpil-fun]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/GettingToKnow/Conveniences.lean#L511-L553
 [fpil-implicit]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/GettingToKnow/Polymorphism.lean#L288
 [fpil-pipe]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/MonadTransformers/Conveniences.lean#L25-L38
@@ -237,5 +192,4 @@ Previous: [Naming](naming.md) · [Contents](../README.md#rules) · Next: [Type c
 [lake-proc]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/lake/Lake/Util/Proc.lean#L38-L40
 [ml-autoimplicit]: https://github.com/leanprover-community/mathlib4/blob/7bb03b4c5313d552989ba5b1c6d3f0f436f65d73/lakefile.lean#L44
 [ml-delims]: https://leanprover-community.github.io/contribute/style.html#whitespace-and-delimiters
-[ocaml-match]: https://ocaml.org/docs/guidelines#pattern-matching-warnings
 [std-spawnargs]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/Init/System/IO.lean#L1434-L1455

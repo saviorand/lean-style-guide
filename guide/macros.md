@@ -2,13 +2,6 @@
 
 Part of [A Lean Style Guide for Software](../README.md), a community draft. Every example compiles with Lean 4.35.0.
 
-<a name="macros-symbols"></a>
-## Custom operators
-
-Avoid new symbolic operators in program APIs. A named function is easier to search for and to read aloud. Use the standard operators through their classes instead.
-
-*Sources: [Lean core style][cs-notation], [measured in Lake][checked].*
-
 <a name="macros-classes"></a>
 ## Standard notation through classes
 
@@ -88,7 +81,6 @@ Make your notation appear in Lean's output the way users write it. `notation`, `
 Previous: [Comments](comments.md) · [Contents](../README.md#rules) · Next: [Performance and low-level code](performance.md)
 
 
-[checked]: ../research/decisions.md#facts-checked-while-drafting
 [cs-file]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/doc/std/style.md#basic-file-structure
 [cs-notation]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/doc/std/style.md#notation-and-unicode
 [mp-macro]: https://github.com/leanprover-community/lean4-metaprogramming-book/blob/9bb0918b272015ad6e39e6db6220fec378a35d8a/lean/main/02_overview.lean#L153-L155

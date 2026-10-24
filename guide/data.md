@@ -9,30 +9,6 @@ Use a `structure` for a value made of several parts that are all present at once
 
 *Source: [FPIL][fpil-product].*
 
-<a name="data-illegal-states"></a>
-## Impossible states
-
-Model state so that impossible combinations can't be written down. A structure with flags and optional fields can describe a connection that is both connected and failed. An inductive type with one constructor per state can't.
-
-```lean
--- bad
-structure Connection where
-  connected : Bool
-  sessionId : Option String
-  lastError : Option String
-```
-
-```lean
--- good
-inductive Connection where
-  | disconnected
-  | connecting (attempt : Nat)
-  | connected (sessionId : String)
-  | failed (error : String)
-```
-
-*Source: [Yaron Minsky][minsky].*
-
 <a name="data-own-types"></a>
 ## Your own types over tuples
 
@@ -255,6 +231,5 @@ def rename (s : Settings) (title : String) : Settings := { s with title }
 [fpil-wrapper]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/ProgramsProofs/SpecialTypes.lean#L52
 [king]: https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/
 [kowainik-data]: https://kowainik.github.io/posts/2019-02-06-style-guide#data-types
-[minsky]: https://blog.janestreet.com/effective-ml-revisited/
 [rust-newtype]: https://rust-lang.github.io/api-guidelines/type-safety.html#c-newtype
 [std-hashmap]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/Std/Data/HashMap/Basic.lean#L56-L59
