@@ -10,7 +10,7 @@ Order each file like this:
 1. a licence or copyright comment, if your project uses one;
 2. `module`, if you use the module system (see [Modules](api.md#api-modules));
 3. the imports;
-4. a module docstring, `/-! … -/`, that says what the file is for;
+4. a module docstring, `/-! … -/`, if the file has one (see [Module docstrings](documentation.md#docs-module));
 5. the code.
 
 Put a blank line between the imports and the module docstring.

@@ -34,6 +34,7 @@ One row per source. Each row links to its note in `notes/`, which quotes the rul
 
 | Source | Note | URL | Author / org | Date / version | License | Scope & audience | Kind |
 |---|---|---|---|---|---|---|---|
+| Paul Butcher, feedback on the first draft | cited directly | https://github.com/saviorand/lean-style-guide/issues/1 | Paul Butcher | 2026-10-21 | none stated (GitHub issue); paraphrased with citation | This guide's editors; practice from Lean application and library work | community advice |
 | Mathlib style guide | [notes/mathlib-style.md](notes/mathlib-style.md) | https://leanprover-community.github.io/contribute/style.html | Lean community / Mathlib maintainers | source changed 2026-09-14 (`7342787`); fetched 2026-10-17 | MIT (site repo metadata) | Mathlib contributors; de facto reference for other projects | normative |
 | Mathlib naming conventions | [notes/mathlib-naming.md](notes/mathlib-naming.md) | https://leanprover-community.github.io/contribute/naming.html | Lean community / Mathlib maintainers | source changed 2026-09-15 (`4bfcf92`); fetched 2026-10-17 | MIT (site repo metadata) | Mathlib contributors | normative |
 | Mathlib documentation standards | [notes/mathlib-doc.md](notes/mathlib-doc.md) | https://leanprover-community.github.io/contribute/doc.html | Lean community / Mathlib maintainers | source changed 2026-09-03 (`31f5fe4`); fetched 2026-10-17 | MIT (site repo metadata) | Mathlib PR authors | normative |

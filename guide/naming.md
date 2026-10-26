@@ -113,7 +113,7 @@ def price! (p : PriceList) (item : String) : Nat :=
 end PriceList
 ```
 
-If you provide a `!` variant, provide a `?` variant too, so callers who can't rule out failure have a safe choice. Std does this for 233 of its 274 `!` functions.
+Add a `!` variant only when callers need one (see [Panics](errors.md#errors-panics)), and prefer a variant that takes a proof. If you provide a `!` variant, provide a `?` variant too, so callers who can't rule out failure have a safe choice. Std does this for 233 of its 274 `!` functions.
 
 *Sources: [Lean naming conventions][cn-data], [FPIL][fpil-failure], [standard library][survey-names].*
 

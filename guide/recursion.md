@@ -24,7 +24,7 @@ decreasing_by exact Nat.mod_lt _ (Nat.pos_of_ne_zero h)
 <a name="recursion-partial"></a>
 ## `partial`
 
-Mark a function `partial` when it might not terminate, or when proving that it does isn't worth it and you won't prove anything about it. Lean then compiles it without a termination proof, but it can't see inside it in proofs. Its return type must have a value, so derive `Inhabited` or `Nonempty` if Lean can't find one. Add a comment when the reason for `partial` isn't obvious.
+Mark a function `partial` only when it's essential: when it might not terminate, as with a server loop, or when nobody knows whether it does. Lean compiles a `partial` function without a termination proof, but it can't see inside it in proofs, so you can't prove anything about what it computes. Its return type must have a value, so derive `Inhabited` or `Nonempty` if Lean can't find one. Add a comment when the reason for `partial` isn't obvious.
 
 ```lean
 -- good
@@ -35,9 +35,7 @@ partial def collatzSteps (n : Nat) (steps : Nat := 0) : Nat :=
   else collatzSteps (3 * n + 1) (steps + 1)
 ```
 
-If you'll want a termination proof later, start with `partial` and test the function first. Then switch to `termination_by` and prove it, so you don't spend time proving that a buggy function terminates.
-
-*Sources: [Lean Reference][ref-partial], [FPIL][fpil-partial], [FRO practice][fro-c].*
+*Sources: [Lean Reference][ref-partial], [FPIL][fpil-partial], [FRO practice][fro-c], [Paul Butcher, issue #1][issue-1].*
 
 <a name="recursion-loops"></a>
 ## Loops
@@ -82,4 +80,5 @@ Previous: [Collections](collections.md) · [Contents](../README.md#rules) · Nex
 [fpil-partial]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/ProgramsProofs/Summary.lean#L110-L126
 [fpil-tail]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/ProgramsProofs/TailRecursion.lean#L30
 [fro-c]: ../research/author-survey.md#consistent-across-authors
+[issue-1]: https://github.com/saviorand/lean-style-guide/issues/1
 [ref-partial]: https://github.com/leanprover/reference-manual/blob/400f1682df64bc00e485215bfa4398d24c0f220c/Manual/RecursiveDefs.lean#L195-L211

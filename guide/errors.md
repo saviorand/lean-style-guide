@@ -87,10 +87,32 @@ def loadAge (path : System.FilePath) : IO Nat := do
 
 *Source: [FRO practice][fro-d].*
 
+
+<a name="errors-defaults"></a>
+## Defaults for missing values
+
+Before you replace a missing value with a default, as with `getD`, check what the missing value can mean. If it can mean that the program is misconfigured, as with a misspelled environment variable or a configuration file in the wrong place, don't default to a value that means "nothing was asked for". The misconfigured program would then give wrong answers without saying why. Report the missing value instead, and if "nothing" is a valid setting, let users ask for it explicitly.
+
+```lean
+-- bad
+def allowedOrigins : IO (List String) := do
+  let raw := (← IO.getEnv "ALLOWED_ORIGINS").getD ""
+  return (raw.splitOn ",").filter (· != "")
+```
+
+```lean
+-- good
+def allowedOrigins : IO (List String) := do
+  let some raw ← IO.getEnv "ALLOWED_ORIGINS"
+    | throw <| IO.userError "ALLOWED_ORIGINS is not set; set it empty to allow no origins"
+  return (raw.splitOn ",").filter (· != "")
+```
+
+*Source: [Paul Butcher, issue #1][issue-1].*
 <a name="errors-panics"></a>
 ## Panics
 
-Use `panic!`, `unreachable!` and functions ending in `!` only for conditions that would be bugs in your own code, never to reject bad input. A panic doesn't stop a Lean program. It prints a message and the program carries on with a default value:
+Use `panic!`, `unreachable!` and functions ending in `!` only when it's essential: for a condition that would be a bug in your own code, where you can't pass a proof that it holds instead. Never use them to reject bad input. A panic doesn't stop a Lean program. It prints a message and the program carries on with a default value:
 
 ```lean
 def risky (xs : Array Nat) : Nat := xs[5]!
@@ -110,35 +132,33 @@ after
 
 Set the environment variable `LEAN_ABORT_ON_PANIC` to make the program abort on the first panic instead.
 
-*Sources: [Lean naming conventions][cn-data], [Google Haskell guide][google-partial], [Lean runtime][lean-panic], [checked with Lean 4.35][checked].*
+*Sources: [Lean naming conventions][cn-data], [Google Haskell guide][google-partial], [Lean runtime][lean-panic], [checked with Lean 4.35][checked], [Paul Butcher, issue #1][issue-1].*
 
 <a name="errors-document"></a>
 ## Documenting failure
 
-Say in the docstring how a function fails: what `none` means, which errors it throws and when it panics.
+Say in the docstring how a function fails when its type doesn't already say so: which errors it throws, when it panics, or what `none` means if it can mean more than one thing. For `price? : List (String × Nat) → String → Option Nat`, a docstring saying that it returns `none` when the item is missing only repeats the type.
 
 ```lean
 -- good
-/-- Returns the price of `item`, or `none` if the list doesn't contain it. -/
-def price? (prices : List (String × Nat)) (item : String) : Option Nat :=
-  prices.lookup item
-
-/-- Returns the price of `item`. Panics if the list doesn't contain it. -/
-def price! (prices : List (String × Nat)) (item : String) : Nat :=
-  (prices.lookup item).get!
+/--
+Reads the configuration file at `path`. Throws if the file can't be read or isn't valid UTF-8.
+-/
+def readConfig (path : System.FilePath) : IO String :=
+  IO.FS.readFile path
 ```
 
-*Source: standard library docstrings, such as [`Array.swapAt!`][std-doc-panics] and [`IO.FS.createDir`][std-doc-throws].*
-
+*Sources: standard library docstrings, such as [`Array.swapAt!`][std-doc-panics] and [`IO.FS.createDir`][std-doc-throws]; [Paul Butcher, issue #1][issue-1].*
 ---
 
-Previous: [Effects and `do` notation](effects.md) · [Contents](../README.md#rules) · Next: [API design and visibility](api.md)
+Previous: [Effects and `do` notation](effects.md) · [Contents](../README.md#rules) · Next: [Logging](logging.md)
 
 [checked]: ../research/decisions.md#facts-checked-while-drafting
 [cn-data]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/doc/std/naming.md#naming-convention-for-data
 [fpil-except]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/Monads.lean#L206-L218
 [fro-d]: ../research/author-survey.md#author-dependent-no-fro-convention
 [google-partial]: https://google.github.io/styleguide/haskellguide.html#partial-functions
+[issue-1]: https://github.com/saviorand/lean-style-guide/issues/1
 [lake-clierror]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/lake/Lake/CLI/Error.lean#L16
 [lean-panic]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/runtime/object.cpp#L80
 [std-doc-panics]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/Init/Data/Array/Basic.lean#L447-L455

@@ -11,7 +11,7 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 ## Guiding principles
 
 - Names should be guessable ([Lean naming conventions][cn-intro]).
-- Put cheap guarantees in types, test the rest, and prove what matters most ([FPIL][fpil-proofs], [Boring Haskell Manifesto][boring-haskell]).
+- Give each claim the strongest guarantee it admits: a type, then a theorem, then a property test, then an example ([Paul Butcher, issue #1][issue-1]).
 
 ## Rules
 
@@ -49,8 +49,16 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 - Return `Option` for one obvious failure and `Except` when the caller needs to know which failure happened ([`errors-option-except`](guide/errors.md#errors-option-except)).
 - Give a library an inductive error type with a `ToString` instance ([`errors-types`](guide/errors.md#errors-types)).
 - In `IO` code, throw errors instead of returning default values ([`errors-io`](guide/errors.md#errors-io)).
-- Use `panic!` and `!` functions only for bugs, never to reject bad input ([`errors-panics`](guide/errors.md#errors-panics)).
-- Say in the docstring how a function fails ([`errors-document`](guide/errors.md#errors-document)).
+- Don't replace a missing value with a default when its absence can mean that the program is misconfigured ([`errors-defaults`](guide/errors.md#errors-defaults)).
+- Use `panic!` and `!` functions only when essential: for bugs, where you can't pass a proof instead, and never to reject bad input ([`errors-panics`](guide/errors.md#errors-panics)).
+- Say in the docstring how a function fails when its type doesn't already say so ([`errors-document`](guide/errors.md#errors-document)).
+
+### [Logging](guide/logging.md)
+
+- Log where the code makes a decision that its result can't express ([`logging-decisions`](guide/logging.md#logging-decisions)).
+- Record the value that decided the branch, not just the outcome ([`logging-values`](guide/logging.md#logging-values)).
+- Log what was asked for, since a span records only the route ([`logging-requests`](guide/logging.md#logging-requests)).
+- Don't log ordinary success when a span already records the request ([`logging-success`](guide/logging.md#logging-success)).
 
 ### [API design and visibility](guide/api.md)
 
@@ -58,7 +66,7 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 - Use the module system in libraries, with a plain `public section` in program files ([`api-modules`](guide/api.md#api-modules)).
 - Mark helpers `private`, or put them in an `Internal` namespace ([`api-private`](guide/api.md#api-private)).
 - Mark a declaration `protected` if its short name would clash after `open` ([`api-protected`](guide/api.md#api-protected)).
-- Deprecate a public declaration with `@[deprecated]` before you rename or remove it ([`api-deprecation`](guide/api.md#api-deprecation)).
+- Deprecate a public declaration before you rename, remove or change it, and note every such change in the changelog ([`api-deprecation`](guide/api.md#api-deprecation)).
 - Avoid `variable` in program code ([`api-variable`](guide/api.md#api-variable)).
 
 ### [Naming](guide/naming.md)
@@ -105,14 +113,16 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 ### [Recursion and termination](guide/recursion.md)
 
 - Prefer structural recursion, and give a measure with `termination_by` when the recursion isn't structural ([`recursion-structural`](guide/recursion.md#recursion-structural)).
-- Mark a function `partial` when it might not terminate or a termination proof isn't worth it. Do so only if you won't prove things about it ([`recursion-partial`](guide/recursion.md#recursion-partial)).
+- Mark a function `partial` only when it might not terminate, or nobody knows whether it does ([`recursion-partial`](guide/recursion.md#recursion-partial)).
 - Use `for`, `while` and `repeat` instead of recursive helpers that only loop ([`recursion-loops`](guide/recursion.md#recursion-loops)).
 - Use loops or accumulators for recursion over large inputs ([`recursion-deep`](guide/recursion.md#recursion-deep)).
 
 ### [Proofs about programs](guide/proofs.md)
 
-- Put cheap guarantees in types, test the rest, and prove what matters most ([`proofs-cost`](guide/proofs.md#proofs-cost)).
-- Keep the simple version of an optimized function as its specification ([`proofs-spec`](guide/proofs.md#proofs-spec)).
+- Prove claims as theorems by default, and fall back to property tests and examples only when a proof doesn't work out ([`proofs-first`](guide/proofs.md#proofs-first)).
+- Keep the simple version of an optimized function as its specification, and prove that the two agree ([`proofs-spec`](guide/proofs.md#proofs-spec)).
+- Time-box a proof, and if it fails, write a property test with a comment that records the obstacle ([`proofs-timebox`](guide/proofs.md#proofs-timebox)).
+- When a module with property tests changes, check whether each property can now be proved ([`proofs-recheck`](guide/proofs.md#proofs-recheck)).
 - Keep short lemmas next to their definitions, and move longer proofs to their own module ([`proofs-location`](guide/proofs.md#proofs-location)).
 - Prefer `grind`, `omega` and `simp` to long manual proofs, and squeeze `simp` calls that aren't the last step ([`proofs-automation`](guide/proofs.md#proofs-automation)).
 - Name a theorem after what it states, in `snake_case`, starting from the conclusion ([`proofs-names`](guide/proofs.md#proofs-names)).
@@ -121,16 +131,18 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 ### [Testing](guide/testing.md)
 
 - Test what types and proofs don't cover ([`tests-coverage`](guide/testing.md#tests-coverage)).
-- Put tests in a `<Pkg>Test` library and make it the package's `testDriver` ([`tests-library`](guide/testing.md#tests-library)).
+- Don't write tests that only restate literals from the source ([`tests-literals`](guide/testing.md#tests-literals)).
+- Put tests in a `<Pkg>Test` library run by `lake test`, or in a `test/` subproject when a library's tests need extra dependencies ([`tests-library`](guide/testing.md#tests-library)).
 - Check results with `#guard_msgs` and `#guard` ([`tests-guard-msgs`](guide/testing.md#tests-guard-msgs)).
+- Compare whole outputs with saved copies only where their exact form is the contract, and review every regenerated copy ([`tests-golden`](guide/testing.md#tests-golden)).
 - Use an executable test driver for tests that run `IO` ([`tests-runtime`](guide/testing.md#tests-runtime)).
-- Test clear properties on random inputs with Plausible ([`tests-property`](guide/testing.md#tests-property)).
+- Test properties of your own code that aren't proved yet on random inputs, with `Plausible.Testable.check` rather than the `plausible` tactic ([`tests-property`](guide/testing.md#tests-property)).
 - In test files that are modules, import the code under test with `meta import` ([`tests-meta-import`](guide/testing.md#tests-meta-import)).
 
 ### [Documentation](guide/documentation.md)
 
-- Give every public declaration in a library a docstring ([`docs-public`](guide/documentation.md#docs-public)).
-- Begin every file with a module docstring that has a `#` title ([`docs-module`](guide/documentation.md#docs-module)).
+- Write a docstring when the name and type leave something unsaid, and not one that restates them ([`docs-when`](guide/documentation.md#docs-when)).
+- Begin a file with a module docstring, with a `#` title, when the file needs more explanation than its code gives ([`docs-module`](guide/documentation.md#docs-module)).
 - Start a function's docstring with a verb such as "Returns", and a type's with a noun phrase ([`docs-summary`](guide/documentation.md#docs-summary)).
 - Show short examples in docstrings, and check them with tests ([`docs-examples`](guide/documentation.md#docs-examples)).
 - Put a short docstring on one line, and the delimiters of a longer one on lines of their own ([`docs-layout`](guide/documentation.md#docs-layout)).
@@ -139,7 +151,7 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 
 - Explain why in comments, and don't restate what the code does ([`comments-why`](guide/comments.md#comments-why)).
 - Write down every invariant that your types don't enforce ([`comments-invariants`](guide/comments.md#comments-invariants)).
-- Leave history and dead code to version control ([`comments-history`](guide/comments.md#comments-history)).
+- Leave history and dead code to version control, and unfinished work to the issue tracker ([`comments-history`](guide/comments.md#comments-history)).
 
 ### [Macros and notation](guide/macros.md)
 
@@ -160,7 +172,8 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 
 - Start from the layout `lake new` creates, with a small `Main.lean` ([`project-layout`](guide/projects.md#project-layout)).
 - Commit `lean-toolchain` and `lake-manifest.json`, and require dependencies at release tags ([`project-dependencies`](guide/projects.md#project-dependencies)).
-- Set `autoImplicit = false`, and `linter.missingDocs = true` in libraries, in the Lake configuration ([`project-options`](guide/projects.md#project-options)).
+- Declare files that you embed with `include_str` as Lake inputs in the library's `needs`, or editing them rebuilds nothing ([`project-embedded-files`](guide/projects.md#project-embedded-files)).
+- Set `autoImplicit = false` in the Lake configuration ([`project-options`](guide/projects.md#project-options)).
 - Check for warnings in CI with `lake build --wfail`, and don't set `warningAsError` in a library ([`project-warnings`](guide/projects.md#project-warnings)).
 - Keep Lean's built-in linters on ([`project-linters`](guide/projects.md#project-linters)).
 - Don't mix reformatting with other changes ([`project-formatting`](guide/projects.md#project-formatting)).
@@ -191,7 +204,6 @@ python3 tools/check_examples.py
 
 The text of this guide is licensed under [CC BY 4.0](LICENSE). The code examples, [tools/](tools/) and [research/scripts/](research/scripts/) are licensed under [Apache-2.0](LICENSE-CODE). Material quoted in [research/](research/) stays under its original licence, listed for each source in [research/index.md](research/index.md).
 
-[boring-haskell]: https://www.snoyman.com/blog/2019/11/boring-haskell-manifesto/#power-to-weight-ratio
 [cn-intro]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/doc/std/naming.md#standard-library-naming-conventions
-[fpil-proofs]: https://github.com/leanprover/fp-lean/blob/0abeea545d560a324e2561f7210fbd6ed154fa02/book/FPLean/ProgramsProofs.lean#L37-L41
 [fro-roadmap]: https://lean-lang.org/fro/roadmap/y4-1/
+[issue-1]: https://github.com/saviorand/lean-style-guide/issues/1

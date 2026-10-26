@@ -7,7 +7,7 @@ The first draft (2026-10-20) had to answer the questions in [open-questions.md](
 | Q0 | Core `doc/std` style and naming are the base. FRO practice across authors confirms or overrides them. Mathlib rules are used only where they aren't about mathematics. | Introduction |
 | Q0b | One short chapter on proofs about programs. For general proof style, the draft defers to core-style and Mathlib. | `#proofs-*` |
 | Q0c | Evidence order: Lean documents, then FRO practice across authors, then Mathlib and Batteries, then other languages. | Introduction |
-| Q1 | `?` for Option, `!` for panics, `D` for a default, no suffix for the total or proof-taking version. Every `!` gets a `?` twin. | `#naming-failure` |
+| Q1 | `?` for Option, `!` for panics, `D` for a default, no suffix for the total or proof-taking version. `!` only where a proof can't be passed instead, and every `!` gets a `?` twin. | `#naming-failure` |
 | Q2 | Anonymous instances; constructors in lowerCamelCase; `ofX`/`toX` (not `fromX`); `M` suffix; recursive helpers named `go`. | `#naming-instances`, `#naming-conversions`, `#naming-monadic`, `#functions-helpers` |
 | Q3 | `isX` for `Bool`, `IsX` for `Prop`; prefer `Bool` in program code. | `#naming-predicates` |
 | Q4 | `fun x =>`. | `#functions-lambdas` |
@@ -19,19 +19,19 @@ The first draft (2026-10-20) had to answer the questions in [open-questions.md](
 | Q10 | `abbrev` for shorthand such as monad stacks, `structure` for domain types, no `def` type synonyms. | `#data-abbrev`, `#data-wrappers` |
 | Q11 | Derive rather than hand-write; `Repr` on every data type; `Hashable` together with `BEq`. | `#data-deriving` |
 | Q12 | `Option` for one obvious failure, `Except` when callers need the reason; `IO` code throws; `IO.ofExcept` where pure code meets `IO`. | `#errors-option-except`, `#errors-io` |
-| Q13 | Inductive error types with `ToString`; panics only for bugs; document failure in docstrings. No rule on catch-all handlers (dropped on 2026-10-24). | `#errors-types`, `#errors-panics`, `#errors-document` |
+| Q13 | Inductive error types with `ToString`; panics only for bugs that a proof can't rule out; document failure where the type doesn't show it; no default for a value whose absence can mean misconfiguration. No rule on catch-all handlers (dropped on 2026-10-24). | `#errors-types`, `#errors-panics`, `#errors-document`, `#errors-defaults` |
 | Q14 | `ReaderT` for configuration; `abbrev` for the application monad; `modify`; `try … finally`; `IO`, `Task` or `Async` as the Reference says. | `#effects-*` |
-| Q15 | Structural recursion first, then `termination_by`; `partial` is fine with a comment; loops in `do` instead of recursive loop helpers. | `#recursion-*` |
-| Q16 | FPIL's cost argument; test before proving; keep executable specifications. | `#proofs-cost`, `#proofs-spec` |
+| Q15 | Structural recursion first, then `termination_by`; `partial` only when termination is unknown; loops in `do` instead of recursive loop helpers. | `#recursion-*` |
+| Q16 | Proofs first: type, then theorem, then property test, then example; prove executable specifications; time-box proofs and revisit property tests (issue #1). | `#proofs-first`, `#proofs-spec`, `#proofs-timebox`, `#proofs-recheck` |
 | Q17 | Short lemmas next to definitions; separate `Lemmas` modules once proofs grow. | `#proofs-location` |
 | Q18 | Strong automation; non-terminal `simp` squeezed to `simp only`. | `#proofs-automation` |
 | Q19 | A verb in the third person for functions, a noun phrase for types and constants. | `#docs-summary` |
-| Q20 | Docstrings on every public declaration in libraries; failure behaviour in docstrings; examples checked by tests. | `#docs-public`, `#errors-document`, `#docs-examples` |
-| Q21 | A `<Pkg>Test` library as `testDriver`; `#guard_msgs` and `#guard`; `meta import` in module tests; an executable driver for `IO` tests; Plausible for properties. | `#tests-*` |
+| Q20 | Docstrings only where the name and type leave something unsaid (issue #1); failure behaviour where the type doesn't show it; examples checked by tests. | `#docs-when`, `#errors-document`, `#docs-examples` |
+| Q21 | A `<Pkg>Test` library as `testDriver`, or a `test/` subproject for a library whose tests need extra dependencies; `#guard_msgs` and `#guard`; `meta import` in module tests; an executable driver for `IO` tests; `Plausible.Testable.check` for properties not yet proved; golden files only where the exact output is the contract. | `#tests-*` |
 | Q22 | The module system for libraries with `public section`; `private` helpers; an `Internal` namespace; `protected` for clashing names. | `#api-modules`, `#api-private`, `#api-protected` |
 | Q23 | Avoid `variable`. No rule on `open` (dropped on 2026-10-21). | `#api-variable` |
 | Q24 | No `@[inline]` or `@[specialize]` without a measurement; `@[csimp]` over `@[implemented_by]`. | `#perf-*` |
-| Q25 | Built-in linters plus `linter.missingDocs` in libraries; `lake build --wfail` in CI; no `warningAsError` in a library's own configuration. | `#project-options`, `#project-warnings`, `#project-linters` |
+| Q25 | Built-in linters, without `linter.missingDocs`; `lake build --wfail` in CI; no `warningAsError` in a library's own configuration. | `#project-options`, `#project-warnings`, `#project-linters` |
 | Q26 | bbatsov's format with stable `<a name>` anchors and compiled examples. Licence not chosen; CC BY 4.0 is proposed. | Contributing |
 | Q27 | `autoImplicit = false`. | `#functions-auto-implicit`, `#project-options` |
 
@@ -44,7 +44,7 @@ The first draft (2026-10-20) had to answer the questions in [open-questions.md](
 
 ## Facts checked while drafting
 
-All 121 checked examples compile with Lean 4.35.0 (`python3 tools/check_examples.py`). Behaviour that the text describes was checked separately with 4.35.0:
+All 129 checked examples compile with Lean 4.35.0 (`python3 tools/check_examples.py`). Behaviour that the text describes was checked separately with 4.35.0:
 - A panic prints its message and the program continues with a default value; `LEAN_ABORT_ON_PANIC` makes it abort (`src/runtime/object.cpp`).
 - `autoImplicit` is on by default.
 - `where` helpers can use the outer function's parameters.
@@ -57,6 +57,11 @@ All 121 checked examples compile with Lean 4.35.0 (`python3 tools/check_examples
 - A call can set a later parameter by name and leave out earlier parameters that have defaults, as in `connect "localhost" (useTls := false)`.
 - A `Bool` parameter can be passed by name, as in `formatName "Ada" "Lovelace" (lastFirst := true)`, with or without a default.
 - A macro whose expansion has a type error is accepted where it is defined and fails where it is used; the equivalent `def` fails where it is defined.
+- The `plausible` tactic closes a goal it finds no counterexample for with `sorry`, so the build warns and `lake build --wfail` fails. `#eval Plausible.Testable.check …` only logs an info message, and a counterexample fails the build (Plausible `v4.35.0-rc4`).
+- Editing a file read with `include_str` rebuilds nothing, even after touching the module or building it explicitly. Declaring the file as an `input_file` in the library's `needs` fixes this, and with `text := true` a change of line endings alone doesn't trigger a rebuild.
+- A root package whose `@[test_driver]` script runs `lake test` in a `test/` subproject passes and fails with the subproject's tests, and the root's `lake-manifest.json` lists none of the subproject's dependencies.
+- `sumToFast n = sumTo n` is proved by induction, `simp only` and `grind`.
+- Code blocks that are `lakefile.lean` files are marked `nocheck`, because plain `lean` can't elaborate Lake's configuration commands. They were built in Lake projects instead.
 
 Measured on 2026-10-21 by grepping lean4 `3a685e6` (approximate counts):
 - `Bool` binders such as `(quiet : Bool)` or `(quiet := false)`: about 200 in `src/Std` and 80 in `src/lake`. Lake passes `Bool` arguments by name at about 250 call sites, such as `(sync := true)`.
@@ -104,3 +109,13 @@ Removed content that restated other style guides without saying anything about L
 
 A check for six-word sequences shared with the vendored guides found no copied sentences. The matches left are stock phrases ("at the end of the line") and short quotes from cited Lean documents.
 
+## Changes from issue #1 on 2026-10-24
+
+Paul Butcher's feedback in [issue #1](https://github.com/saviorand/lean-style-guide/issues/1) was adopted except for one rule about network tests, which is too specific for this guide. His rule about tests that assert on exact HTML became the more general `tests-golden`. Rules taken from the issue cite it as their source.
+
+- Proofs first (point 2). The guiding principle and `proofs-first` now prefer a theorem to a test, which reverses the earlier position taken from FPIL's cost argument. `proofs-spec` proves its example, and `proofs-timebox` and `proofs-recheck` are new.
+- `partial` and `!` only when essential (point 5): `recursion-partial`, `errors-panics`, `naming-failure`.
+- Documentation only where the source leaves something unsaid (point 4): `docs-public` became `docs-when`, `docs-module` and `layout-file` make module docstrings optional, and `project-options` no longer turns on `linter.missingDocs`. This is a deliberate departure from Lean core and Batteries, which document every public declaration.
+- Testing (points 1, 3, 10): `tests-library` adds a `test/` subproject for libraries, because Lake has no test-only dependencies; the property and run-time examples test the reader's code; `tests-literals` and `tests-golden` are new.
+- `comments-history` sends TODOs to the issue tracker (point 6); `errors-defaults` is new (point 7); `api-deprecation` covers signature, default and format changes (point 8).
+- `project-embedded-files` is new (point 9), and so is the Logging chapter (point 11).
