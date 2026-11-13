@@ -60,10 +60,23 @@ instance : ToString AgeError where
 In `IO` code, report a failure by throwing it. Use `IO.ofExcept` to turn an `Except` into a thrown error where pure code meets `IO`. Don't turn an error into a default value, because then the caller can't tell that anything went wrong.
 
 ```lean
-def parseAge (s : String) : Except String Nat :=
-  match s.toNat? with
-  | some n => .ok n
-  | none => .error s!"not a number: {s}"
+inductive AgeError where
+  | missing
+  | notANumber (input : String)
+  | tooLarge (n : Nat)
+deriving Repr
+
+instance : ToString AgeError where
+  toString
+    | .missing => "age is missing"
+    | .notANumber s => s!"not a number: {s}"
+    | .tooLarge n => s!"age too large: {n}"
+
+def parseAge (s : String) : Except AgeError Nat := do
+  if s.isEmpty then throw .missing
+  let some n := s.toNat? | throw (.notANumber s)
+  if n > 150 then throw (.tooLarge n)
+  return n
 
 -- bad
 def loadAge (path : System.FilePath) : IO Nat := do
@@ -75,18 +88,70 @@ def loadAge (path : System.FilePath) : IO Nat := do
 ```
 
 ```lean
-def parseAge (s : String) : Except String Nat :=
-  match s.toNat? with
-  | some n => .ok n
-  | none => .error s!"not a number: {s}"
+inductive AgeError where
+  | missing
+  | notANumber (input : String)
+  | tooLarge (n : Nat)
+deriving Repr
+
+instance : ToString AgeError where
+  toString
+    | .missing => "age is missing"
+    | .notANumber s => s!"not a number: {s}"
+    | .tooLarge n => s!"age too large: {n}"
+
+def parseAge (s : String) : Except AgeError Nat := do
+  if s.isEmpty then throw .missing
+  let some n := s.toNat? | throw (.notANumber s)
+  if n > 150 then throw (.tooLarge n)
+  return n
 
 -- good
 def loadAge (path : System.FilePath) : IO Nat := do
   IO.ofExcept (parseAge (← IO.FS.readFile path).trimAscii.toString)
 ```
 
-*Source: [FRO practice][fro-d].*
+`IO.ofExcept` keeps only the message: the `AgeError` becomes a string inside an `IO.Error`, so callers can no longer match on it. Where callers need the constructors, use `ExceptT AgeError IO` instead, or `EIO AgeError` if `AgeError` can also represent `IO` failures.
 
+*Sources: [FRO practice][fro-d], [checked with Lean 4.35][checked].*
+
+<a name="errors-context"></a>
+## Context in errors
+
+Add context to an error at the level that knows it, because the code that detects the failure usually doesn't have it. `loadAge` above reports `not a number: abc` without saying which file it read. `Except.mapError` adds that context without unpacking the result, and since `IO.ofExcept` keeps only the message anyway, a string is enough here:
+
+```lean
+inductive AgeError where
+  | missing
+  | notANumber (input : String)
+  | tooLarge (n : Nat)
+deriving Repr
+
+instance : ToString AgeError where
+  toString
+    | .missing => "age is missing"
+    | .notANumber s => s!"not a number: {s}"
+    | .tooLarge n => s!"age too large: {n}"
+
+def parseAge (s : String) : Except AgeError Nat := do
+  if s.isEmpty then throw .missing
+  let some n := s.toNat? | throw (.notANumber s)
+  if n > 150 then throw (.tooLarge n)
+  return n
+
+-- good
+def loadAge (path : System.FilePath) : IO Nat := do
+  let age := parseAge (← IO.FS.readFile path).trimAscii.toString
+  IO.ofExcept (age.mapError (s!"{path}: {·}"))
+```
+
+```text
+age.txt: not a number: abc
+```
+
+Where callers need to match on the cause, keep it as a field instead of in a string, as in a `LoadError` structure with `path` and `cause : AgeError` fields. Don't repeat what an error already says: `IO.FS.readFile` names the file in its own errors.
+
+*Sources: [`JsonObject`][lake-jsonobject] and the [manifest parser][lake-manifest] in Lake, [checked with Lean 4.35][checked].*
 
 <a name="errors-defaults"></a>
 ## Defaults for missing values
@@ -109,6 +174,7 @@ def allowedOrigins : IO (List String) := do
 ```
 
 *Source: [Paul Butcher, issue #1][issue-1].*
+
 <a name="errors-panics"></a>
 ## Panics
 
@@ -149,6 +215,7 @@ def readConfig (path : System.FilePath) : IO String :=
 ```
 
 *Sources: standard library docstrings, such as [`Array.swapAt!`][std-doc-panics] and [`IO.FS.createDir`][std-doc-throws]; [Paul Butcher, issue #1][issue-1].*
+
 ---
 
 Previous: [Effects and `do` notation](effects.md) · [Contents](../README.md#rules) · Next: [Logging](logging.md)
@@ -160,6 +227,8 @@ Previous: [Effects and `do` notation](effects.md) · [Contents](../README.md#rul
 [google-partial]: https://google.github.io/styleguide/haskellguide.html#partial-functions
 [issue-1]: https://github.com/saviorand/lean-style-guide/issues/1
 [lake-clierror]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/lake/Lake/CLI/Error.lean#L16
+[lake-jsonobject]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/lake/Lake/Util/JsonObject.lean#L64
+[lake-manifest]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/lake/Lake/Load/Manifest.lean#L127-L128
 [lean-panic]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/runtime/object.cpp#L80
 [std-doc-panics]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/Init/Data/Array/Basic.lean#L447-L455
 [std-doc-throws]: https://github.com/leanprover/lean4/blob/3a685e6c855f0eb4ccabe92e21120f1b1ef81d24/src/Init/System/IO.lean#L896-L900

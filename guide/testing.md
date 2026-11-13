@@ -32,6 +32,7 @@ def serverUrl (host : String) (port : Nat := defaultPort) : String := s!"http://
 ```
 
 *Source: [Paul Butcher, issue #1][issue-1].*
+
 <a name="tests-library"></a>
 ## A test library
 
@@ -110,6 +111,7 @@ def slug (title : String) : String :=
 Compare output with a saved copy only where its exact form is what you promise, such as a file format, a protocol message or an error message that people read. `#guard_msgs` does this for short output. For longer output, keep the expected output in a file next to the test, as Lean's own test suite does. When the output changes on purpose, regenerate the file with a script and review the diff, rather than copying the new output over it. Where only the meaning matters, as with generated HTML, check the meaning instead, for example by parsing the output and checking the parts you care about, so that a harmless change to the markup doesn't break the test.
 
 *Sources: [Lean's test suite][lean-tests-expected], [Paul Butcher, issue #1][issue-1].*
+
 <a name="tests-runtime"></a>
 ## Run-time tests
 
@@ -166,6 +168,7 @@ def unescape (s : String) : String := Id.run do
 ```
 
 *Sources: [testing practice][testing], [Google Haskell guide][google-quickcheck], [Paul Butcher, issue #1][issue-1], [checked with Lean 4.35][checked].*
+
 <a name="tests-meta-import"></a>
 ## Tests and the module system
 
