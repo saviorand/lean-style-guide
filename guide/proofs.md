@@ -13,6 +13,7 @@ A theorem is required when the claim is about a pure, total function and either:
 - a counterexample would corrupt output rather than merely look wrong, as with an invariant that a file format depends on.
 
 *Sources: [Paul Butcher, issue #1][issue-1], [FPIL][fpil-proofs].*
+
 <a name="proofs-spec"></a>
 ## Executable specifications
 
@@ -54,6 +55,7 @@ Give a proof a fixed amount of time. If it doesn't work out, write a property te
 When a module that has property tests changes, check whether each property can now be proved. A change to a definition or a new lemma in a dependency can make a proof that failed before go through.
 
 *Source: [Paul Butcher, issue #1][issue-1].*
+
 <a name="proofs-location"></a>
 ## Location of proofs
 

@@ -18,7 +18,7 @@ The first draft (2026-10-20) had to answer the questions in [open-questions.md](
 | Q9 | Check at the boundary and pass a type that carries the proof; no proof obligations for API users; no indexed families in APIs. | `#data-boundary`, `#data-indexed-families` |
 | Q10 | `abbrev` for shorthand such as monad stacks, `structure` for domain types, no `def` type synonyms. | `#data-abbrev`, `#data-wrappers` |
 | Q11 | Derive rather than hand-write; `Repr` on every data type; `Hashable` together with `BEq`. | `#data-deriving` |
-| Q12 | `Option` for one obvious failure, `Except` when callers need the reason; `IO` code throws; `IO.ofExcept` where pure code meets `IO`. | `#errors-option-except`, `#errors-io` |
+| Q12 | `Option` for one obvious failure, `Except` when callers need the reason; `IO` code throws; `IO.ofExcept` where pure code meets `IO`; context added with `Except.mapError` at the level that knows it. | `#errors-option-except`, `#errors-io`, `#errors-context` |
 | Q13 | Inductive error types with `ToString`; panics only for bugs that a proof can't rule out; document failure where the type doesn't show it; no default for a value whose absence can mean misconfiguration. No rule on catch-all handlers (dropped on 2026-10-24). | `#errors-types`, `#errors-panics`, `#errors-document`, `#errors-defaults` |
 | Q14 | `ReaderT` for configuration; `abbrev` for the application monad; `modify`; `try … finally`; `IO`, `Task` or `Async` as the Reference says. | `#effects-*` |
 | Q15 | Structural recursion first, then `termination_by`; `partial` only when termination is unknown; loops in `do` instead of recursive loop helpers. | `#recursion-*` |
@@ -44,7 +44,7 @@ The first draft (2026-10-20) had to answer the questions in [open-questions.md](
 
 ## Facts checked while drafting
 
-All 129 checked examples compile with Lean 4.35.0 (`python3 tools/check_examples.py`). Behaviour that the text describes was checked separately with 4.35.0:
+All 130 checked examples compile with Lean 4.35.0 (`python3 tools/check_examples.py`). Behaviour that the text describes was checked separately with 4.35.0:
 - A panic prints its message and the program continues with a default value; `LEAN_ABORT_ON_PANIC` makes it abort (`src/runtime/object.cpp`).
 - `autoImplicit` is on by default.
 - `where` helpers can use the outer function's parameters.
@@ -54,6 +54,8 @@ All 129 checked examples compile with Lean 4.35.0 (`python3 tools/check_examples
 - `scoped` notation needs a namespace, and `infixl` notation prints back as written.
 - `def Port := Nat` blocks `OfNat Port`.
 - `String.trim` no longer exists in 4.35; examples use `String.trimAscii`.
+- `IO.ofExcept` throws `IO.userError (toString e)`, so a caller can catch only the message. `IO.FS.readFile` can be called directly in `ExceptT AgeError IO`, but in `EIO ε` its `IO.Error` has to be converted with `IO.toEIO` first.
+- `age.mapError (s!"{path}: {·}")` gives `age.txt: not a number: abc`. A `LoadError` structure with `path` and `cause` fields can still be matched on through `ExceptT`. `IO.FS.readFile` on a missing file already reports `file: nope.txt`.
 - A call can set a later parameter by name and leave out earlier parameters that have defaults, as in `connect "localhost" (useTls := false)`.
 - A `Bool` parameter can be passed by name, as in `formatName "Ada" "Lovelace" (lastFirst := true)`, with or without a default.
 - A macro whose expansion has a type error is accepted where it is defined and fails where it is used; the equivalent `def` fails where it is defined.
@@ -119,3 +121,7 @@ Paul Butcher's feedback in [issue #1](https://github.com/saviorand/lean-style-gu
 - Testing (points 1, 3, 10): `tests-library` adds a `test/` subproject for libraries, because Lake has no test-only dependencies; the property and run-time examples test the reader's code; `tests-literals` and `tests-golden` are new.
 - `comments-history` sends TODOs to the issue tracker (point 6); `errors-defaults` is new (point 7); `api-deprecation` covers signature, default and format changes (point 8).
 - `project-embedded-files` is new (point 9), and so is the Logging chapter (point 11).
+
+## Changes on 2026-11-14
+
+- `errors-context` is new. It comes from a review comparing the guide with Go's error wrapping (`fmt.Errorf("...: %w", err)`). It passes the 2026-10-24 test because Lean has its own idiom: `Except.mapError`, used as `|>.mapError (s!"{prop}: {·}")` in Lake's `JsonObject` and manifest parser.

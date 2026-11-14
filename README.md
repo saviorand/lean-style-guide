@@ -49,6 +49,7 @@ Main resources used here are Lean's own [style guide](https://github.com/leanpro
 - Return `Option` for one obvious failure and `Except` when the caller needs to know which failure happened ([`errors-option-except`](guide/errors.md#errors-option-except)).
 - Give a library an inductive error type with a `ToString` instance ([`errors-types`](guide/errors.md#errors-types)).
 - In `IO` code, throw errors instead of returning default values ([`errors-io`](guide/errors.md#errors-io)).
+- Add context to an error at the level that knows it, such as the file being read ([`errors-context`](guide/errors.md#errors-context)).
 - Don't replace a missing value with a default when its absence can mean that the program is misconfigured ([`errors-defaults`](guide/errors.md#errors-defaults)).
 - Use `panic!` and `!` functions only when essential: for bugs, where you can't pass a proof instead, and never to reject bad input ([`errors-panics`](guide/errors.md#errors-panics)).
 - Say in the docstring how a function fails when its type doesn't already say so ([`errors-document`](guide/errors.md#errors-document)).

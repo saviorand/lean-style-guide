@@ -27,12 +27,14 @@ structure ClientConfig where
 ```
 
 *Sources: [Paul Butcher, issue #1][issue-1], [lean4 `AGENTS.md`][agents-comments]; for the stricter practice, [Lean core style][cs-docs] and [Batteries configuration][batteries-docs].*
+
 <a name="docs-module"></a>
 ## Module docstrings
 
 Begin a file with a module docstring when the file needs an explanation that its code doesn't give, such as how its parts fit together or why it exists. Give it a `#` title, as in the [file structure](layout.md#layout-file) example. Don't add one that only repeats the file name.
 
 *Sources: [Paul Butcher, issue #1][issue-1], [Mathlib documentation][ml-doc].*
+
 <a name="docs-summary"></a>
 ## The first sentence
 

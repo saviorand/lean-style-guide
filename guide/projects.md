@@ -62,6 +62,7 @@ lean_lib MyApp where
 ```
 
 *Sources: [Lake README][lake-inputs], [Paul Butcher, issue #1][issue-1], [checked with Lean 4.35][checked].*
+
 <a name="project-options"></a>
 ## Lean options
 
